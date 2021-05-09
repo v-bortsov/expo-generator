@@ -1,0 +1,6 @@
+query languages{
+  languages{
+    id
+    name
+  }
+}

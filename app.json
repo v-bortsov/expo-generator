@@ -12,6 +12,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "sdkVersion": "40.0.0",
     "updates": {
       "fallbackToCacheTimeout": 0
     },

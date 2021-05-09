@@ -11,6 +11,7 @@ export type RootStackParamList = {
 export type BottomTabParamList = {
   TabOne: undefined;
   TabTwo: undefined;
+  TabThree: undefined;
 };
 
 export type TabOneParamList = {
@@ -20,3 +21,23 @@ export type TabOneParamList = {
 export type TabTwoParamList = {
   TabTwoScreen: undefined;
 };
+export type TabThreeParamList = {
+  TabThreeScreen: undefined;
+};
+
+type Relation = {
+  type: 'hasMany' | 'hasOne'
+  column: string
+}
+type Chain = {
+  name: "table_1.table_2"
+  tables: Table[]
+  rels: Relation[]
+}
+type Column = {
+
+}
+type Table = {
+
+}
+

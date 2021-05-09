@@ -1,0 +1,11 @@
+query getCitiesByCountry($countryId: ID!, $limit: int){
+  countries(id: $countryId){
+    id
+    name
+    cities(limit: $limit){
+      id
+      name
+      native
+    }
+  }
+}

@@ -1,0 +1,1 @@
+export const GRAPHQL_API = 'localhost:4000/api'

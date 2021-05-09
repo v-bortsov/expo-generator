@@ -13,13 +13,18 @@ export default {
       Root: {
         screens: {
           TabOne: {
-            screens: {
+            screens: {    
               TabOneScreen: 'one',
             },
           },
           TabTwo: {
-            screens: {
+            screens: {    
               TabTwoScreen: 'two',
+            },
+          },
+          TabThree: {
+            screens: {
+              TabThreeScreen: 'three',
             },
           },
         },
