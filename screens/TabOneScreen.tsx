@@ -7,9 +7,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FormFields } from '../components/AddColumn';
 import { CollectList } from '../components/List';
 import { View } from '../components/Themed';
+import { unionFields } from '../constants/Fields';
 import { changeColumn, clearEditColumn, createColumn, editColumn, fetchUserById, loading, removeColumn, run, selectColumns, selectEditColumn, selectLoading, selectRows } from '../features/generator/generatorSlice';
 import { downloadObjectAsJson } from '../utils/dom';
-import { onFinish, unionFields } from '../utils/form';
+import { onFinish } from '../utils/form';
 import { reducerFields } from '../utils/hook';
 import { findByNameAndChangeScope } from '../utils/popular';
 
