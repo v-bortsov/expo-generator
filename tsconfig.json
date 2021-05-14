@@ -1,8 +1,9 @@
 {
-  "extends": "expo/tsconfig.base",
-  "compilerOptions": {
-    "strict": true,
-    "jsx": "react",
-    "incremental": false
-  }
+	"exclude": ["node_modules"],
+	"files": ["./react-app-env.d.ts"],
+	"compilerOptions": {
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"noFallthroughCasesInSwitch": true,
+	}
 }
