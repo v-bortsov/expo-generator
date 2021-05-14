@@ -1,4 +1,4 @@
-import { always, append, assoc, chain, clone, converge, curry, filter, flatten, is, length, map, mergeRight, objOf, of, omit, path, pick, pipe, pluck, prop, propEq, reject, slice, splitAt, transpose, values, when, zipObj, __, xprod } from 'ramda';
+import { always, append, assoc, chain, clone, converge, curry, filter, flatten, is, length, map, mergeRight, objOf, of, omit, path, pick, pipe, pluck, prop, propEq, reject, slice, splitAt, transpose, values, when, zipObj, __, xprod, adjust, findIndex } from 'ramda';
 // import { multipledParts } from 'ramda-combo';
 // import {Maybe} from 'ramda-fantasy'
 import { ColumnType, ObjectLiteral, Option, OptionDate, OptionNumber, TypeLimiting } from '../react-app-env';
@@ -103,6 +103,21 @@ export const enumToObject: any = pipe<any, any, any, any>(
     zipObj,
     [prop<any>(0), prop<any>(1)]
   )
+)
+
+export const findByNameAndChangeScope: any = (
+  findBy: string, change: any
+) => converge(
+  adjust(
+    __,
+    change
+  ),
+  [
+    findIndex(propEq(
+      'name',
+      findBy
+    )), clone
+  ]
 )
 
 export const findAndMerge = curry((

@@ -1,5 +1,5 @@
 import { configureStore, applyMiddleware, ThunkAction, Action, getDefaultMiddleware  } from '@reduxjs/toolkit'
-import generatorReducer from '../features/generator/generatorSlice'
+import generatorReducer from './features/generator/generatorSlice'
 import logger from 'redux-logger'
 
 const middleware = getDefaultMiddleware({

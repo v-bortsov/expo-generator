@@ -8,13 +8,16 @@ export function Select({value, onChange, options}: any){
       style={styles.select}
       selectedValue={value}
       onValueChange={onChange}>
-        {options.map(({value, label})=><Picker.Item key={value} label={label} value={value}/>)}
+      {options.map(({value, label}: any)=><Picker.Item style={styles.option} key={value} label={label} value={value}/>)}
     </Picker>
   )
 }
 const styles = StyleSheet.create({
   select: {
-    height: 50,
-    fontSize: 25,
+    height: 30,
+    fontSize: 20,
+  },
+  option: {
+    fontSize: 20,
   }
 });

@@ -1,33 +1,15 @@
-import { createSlice, current, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit'
-import { anyPass, append, clone, cond, converge, ifElse, map, mergeRight, pipe, prop, propEq, reject, split, __ } from 'ramda'
-import { RootState, store } from '../../app/store'
-import { ColumnType, GeneratorState, TypeLimiting } from '../../react-app-env.d'
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { anyPass, append, clone, cond, ifElse, map, mergeRight, pipe, prop, propEq, reject, split, __ } from 'ramda'
+import { RootState } from '../../store'
+import { ColumnType, GeneratorState, Nullable, TypeLimiting } from '../../react-app-env.d'
 import { dayOfWeekToDate } from '../../utils/dates'
 import { random } from '../../utils/numbers'
-import { addParam, cartesianCondition, findAndMerge, mergeAndRestruct } from '../../utils/popular'
+import { addParam, cartesianCondition, findAndMerge } from '../../utils/popular'
+import { exampleFields } from '../../constants/Examples'
 
 export const initialState: GeneratorState = {
-  columns: [
-    {
-      name: 'city',
-      label: 'City',
-      type: 'custom',
-      edit: false,
-      collect: ['Moscow', 'London', 'Jerusalem']
-    }, {
-      name: 'product',
-      label: 'Product',
-      type: 'custom',
-      edit: false,
-      collect: ['Socks', 'T-Shirt', 'Coat', 'Jeans', 'Trousers', 'Sneakers']
-    }, {
-      name: 'Skill',
-      label: 'Job Skill',
-      type: 'custom',
-      edit: false,
-      collect: ['Baker', 'Health Educator', 'Budget Analyst', 'Design Engineer', 'Designer', 'Backend Developer']
-    }
-  ],
+  columns: exampleFields,
+  editColumn: null,
   rows: [],
   limiting: null,
   loading: false
@@ -41,30 +23,17 @@ const customType = addParam(
   [clone]
 )
 
-const wrapLogic = (func: any)=> converge(
-  mergeRight,
-  [
-    clone, pipe(
-      prop('options'),
-      func,
-      mergeAndRestruct(
-        ['collect'],
-        'options'
-      )
-    )
-  ]
-)
 const bindTypeToHandler = cond([
   [
     propEq(
       'type',
       'dates'
-    ), wrapLogic(dayOfWeekToDate)
+    ), dayOfWeekToDate
   ], [
     propEq(
       'type',
       'integer'
-    ), wrapLogic(random)
+    ), random
   ]
 ])
 export const generatorSlice = createSlice({
@@ -72,24 +41,14 @@ export const generatorSlice = createSlice({
   initialState,
   reducers: {
     editColumn: (
-      state, action: PayloadAction<ColumnType>
+      state, action: PayloadAction<any>
     ) => {
-      state.columns = findAndMerge(
-        state.columns,
-        action.payload,
-        'name'
-      )
+      state.editColumn = action.payload.name
     },
     clearEditColumn: (
       state, action: PayloadAction<ColumnType>
     ) => {
-      state.columns = map(
-        mergeRight(
-          __,
-          action.payload
-        ),
-        state.columns
-      )
+      state.editColumn = null
     },
     createColumn: (
       state, action: PayloadAction<ColumnType>
@@ -186,5 +145,6 @@ export const selectColumns = (state: RootState) => state.generator.columns
 export const selectRows = (state: RootState) => state.generator.rows
 export const selectLimiting = (state: RootState) => state.generator.limiting
 export const selectLoading = (state: RootState): boolean | undefined => state.generator.loading
+export const selectEditColumn = (state: RootState): Nullable<string> => state.generator.editColumn
 
 export default generatorSlice.reducer

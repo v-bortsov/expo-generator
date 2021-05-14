@@ -1,50 +1,45 @@
-import { converge, assocPath, path, prop, always, clone, map, ifElse, propEq, __, assoc, pipe, pair, cond, pathEq, isEmpty, not } from 'ramda'
+import { converge, assocPath, path, prop, always, clone, map, ifElse, propEq, __, assoc, pipe, pair, cond, pathEq, isEmpty, not, tap } from 'ramda'
 import { selectByType } from './form'
 import { findAndMerge } from './popular'
 
 const actionOnDictionaryField = clone
 
-const actionOnOtherFields = converge(
+const updateFields = (func: any)=>converge(
   assocPath([0, 'fields']),
-  [
-    converge(
-      findAndMerge,
-      [path<any>([0, 'fields']), prop<any>(1), always('name')]
-    ), clone
-  ]
+  [func, clone]
 )
-const actionOnTypeField = converge(
-  assocPath([0, 'fields']),
+
+const actionOnOtherFields = updateFields(converge(
+  findAndMerge,
+  [path<any>([0, 'fields']), prop<any>(1), always('name')]
+))
+const actionOnTypeField = updateFields(converge(
+  map,
   [
     converge(
-      map,
-      [
+      ifElse(
+        propEq(
+          'name',
+          'type'
+        ),
+        __,
         converge(
-          ifElse(
-            propEq(
-              'name',
-              'type'
-            ),
-            __,
-            converge(
-              assoc('value'),
-              [prop('defaultValue'), clone]
-            )
-          ),
-          [
-            pipe(
-              path([1, 'value']),
-              assoc('value')
-            )
-          ]
-        ), pipe(
-          path([1,'value']),
-          selectByType
+          assoc('value'),
+          [prop('defaultValue'), clone]
+        )
+      ),
+      [
+        pipe(
+          path([1, 'value']),
+          assoc('value')
         )
       ]
-    ), clone
+    ), pipe(
+      path([1,'value']),
+      selectByType
+    )
   ]
-)
+))
 export const reducerFields = pipe(
   pair,
   cond([
@@ -58,6 +53,11 @@ export const reducerFields = pipe(
         [1, 'name'],
         'dictionary'
       ), actionOnDictionaryField
+    ], [
+      pathEq(
+        [1, 'name'],
+        'updateFields'
+      ), updateFields(path([1, 'value']))
     ], [
       pipe(
         prop(1),

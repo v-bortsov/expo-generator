@@ -2,48 +2,45 @@ import { InputItem, TextareaItem } from '@ant-design/react-native';
 // import DateTimePicker from '@react-native-community/datetimepicker';
 import DatePicker from '@dietime/react-native-date-picker';
 import * as moment from 'moment';
-import { always, andThen, append, assoc, both, call, chain, clone, complement, compose, cond, converge, curry, equals, find, includes, indexBy, isEmpty, join, lensPath, lensProp, map, mergeAll, mergeRight, objOf, omit, over, pair, path, pick, pipe, pluck, prop, propEq, slice, T, tap, toPairs, transpose, when, zipObj, __ } from 'ramda';
+import { always, andThen, append, assoc, both, call, chain, clone, complement, compose, cond, converge, curry, equals, find, has, includes, indexBy, isEmpty, join, lensPath, lensProp, map, mergeAll, mergeRight, objOf, omit, over, pair, path, pathEq, pick, pipe, pluck, prop, propEq, slice, split, T, tap, toPairs, transpose, when, zipObj, __ } from 'ramda';
 import InputSpinner from 'react-native-input-spinner';
 import { Select } from '../components/CustomPicker';
 import { WeekDays } from '../components/WeekDays';
+import { customFields, integerFields, dateFields, dictionaryFields } from '../constants/Fields';
 import { createColumn } from '../features/generator/generatorSlice';
 import { AppDispatch, Field } from '../react-app-env';
 // import { client } from "../client";
 import { countries, currencies, getCitiesByCountry, languages } from './network';
-import { mergeAndRestruct } from './popular';
+import { findAndMerge, mergeAndRestruct } from './popular';
 
-const daysOfWeek = [{ label: 'Sunday', abbr: 'Sun', active: false }, { label: 'Monday', abbr: 'Mon', active: true }, { label: 'Tuesday', abbr: 'Tue', active: false }, { label: 'Wednesday', abbr: 'Wed', active: true }, { label: 'Thursday', abbr: 'Thu', active: false }, { label: 'Friday', abbr: 'Fri', active: true }, { label: 'Saturday', abbr: 'Sat', active: false }]
-const areas = [{ label: 'Custom', value: 'custom' }, { label: 'Integer', value: 'integer' }, { label: 'Dates', value: 'dates' }, { label: 'Dictionary', value: 'dictionary' },]
-const dictionaries= [{ label: 'Cities', value: 'cities' }, { label: 'Countries', value: 'countries' }, { label: 'Languages', value: 'languages' }, { label: 'Currencies', value: 'currencies' },]
-// const { TextArea } = Input
-const baseColumn = ['name', 'label', 'type', 'collect']
-
-export const unionFields = [{name: 'type', label: 'Type', rules: [{ required: true, message: 'Missing type' }], component: 'Select', options: areas, defaultValue: null}, {name: 'name', label: 'Name', rules: [{ required: true }], component: 'Input', defaultValue: 'asdfasf'}, {name: 'label', label: 'Label', rules: [{ required: true }], component: 'Input', defaultValue: null}, {name: 'collect', label: 'Collect', rules: [{ required: true }], component: 'TextArea', defaultValue: null, rows: 4}]
-export const customFields = [...unionFields]
-
-export const dateFields = [...unionFields, {name: 'days', label: 'Days of week', rules: [{ required: true }], component: 'WeekDays', defaultValue: daysOfWeek }, {name: 'startDay', label: 'Start Day', rules: [{ required: true }], component: 'DatePicker',  value: new Date()}, {name: 'limit', label: 'Limit', rules: [{ required: true }], component: 'InputNumber', defaultValue: 0 },]
-export const integerFields = [...unionFields, {name: 'from', label: 'From', rules: [{ required: true }], component: 'InputNumber', defaultValue: 1 }, {name: 'to', label: 'To', rules: [{ required: true }], component: 'InputNumber', defaultValue: 10 }, {name: 'length', label: 'Length', rules: [{ required: true }], component: 'InputNumber', defaultValue: 10 },]
-export const dictionaryFields = [...unionFields, {name: 'dictionary', label: 'Type', rules: [{ required: true, message: 'Missing type' }], component: 'Select', options: dictionaries, defaultValue: null}, {name: 'collect', label: 'Collect', rules: [{ required: true }], component: 'TextArea', defaultValue: null, rows: 4},]
 export const components = {
   Input: InputItem, InputNumber: InputSpinner, DatePicker,  Select, TextArea: TextareaItem, WeekDays
 }
 export const selectByType = cond<string, any[]>([[equals('custom'), always(customFields)], [equals('integer'), always(integerFields)], [equals('dates'), always(dateFields)], [equals('dictionary'), always(dictionaryFields)], [T, always([])]])
 
 export const onFinish = curry((
-  dispatch: any, state: any, values: any
+  dispatch: any, state: any, slicer: any
 ) => pipe(
   indexBy<any>(prop('name')),
-  over(
-    lensPath(['startDay','value']),
-    (e: any)=>moment(e)
-      .format('DD.MM.YYYY')
+  when(
+    has('startDay'),
+    over(
+      lensPath(['startDay', 'value']),
+      (e: any)=>moment(e)
+        .format('DD.MM.YYYY')
+    ),
   ),
-  pluck('value'),
-  mergeAndRestruct(
-    baseColumn,
-    'options'
+  when(
+    pathEq(
+      ['type', 'value'],
+      'custom'
+    ),
+    over(
+      lensPath(['collect', 'value']),
+      split('\n')
+    ),
   ),
-  createColumn,
+  slicer,
   dispatch
 )(state.fields))
 
@@ -125,7 +122,7 @@ const loadDictionaryData = curry((
 })
 
 
-export const extractValueByComponent = curry((
+export const extractValueOfComponent = curry((
   props, dispatch, event
 ) => cond<any, any>([
   // [
@@ -172,41 +169,6 @@ export const extractValueByComponent = curry((
   ], [equals('WeekDays'), compose(always(event))]
 ])(props))
 
-export const buildFields = pipe(
-  omit(['edit']),
-  tap(x => console.log(
-    'it is form',
-    x
-  )),
-  when(
-    complement(isEmpty),
-    over<any, any>(
-      lensProp('collect'),
-      join('\n')
-    )
-  ),
-  converge(
-    mergeRight,
-    [omit(['options']), prop('options')]
-  ),
-  toPairs,
-  map(zipObj(['name', 'value'])),
-  converge(
-    pair,
-    [
-      pipe(
-        find(propEq(
-          'name',
-          'type'
-        )),
-        prop('value'),
-        selectByType
-      ), clone
-    ]
-  ),
-  transpose,
-  map(mergeAll)
-)
 // (component: any)=> React.createElement(component)
 export const getReactComponentFromCollect = pipe<Field, any, JSX.Element>(
   prop('component'),
@@ -225,7 +187,7 @@ export const addValueAndOnChange: any = (dispatch: AppDispatch)=>chain(
       [
         pick(['name']), always(pipe<any, any, any>(
         // !! multipleStoreChanges
-          extractValueByComponent(
+          extractValueOfComponent(
             props,
             dispatch
           ),

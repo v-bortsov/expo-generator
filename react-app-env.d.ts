@@ -3,7 +3,8 @@ interface GeneratorState {
   columns: ColumnType[]
   rows: any[]
   limiting: TypeLimiting,
-  loading: boolean | undefined
+  loading: boolean | undefined,
+  editColumn: null | string
 }
 type ColumnType<T> = {
   name: string

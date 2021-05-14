@@ -1,4 +1,4 @@
-import { client } from "../client";
+import { client } from '../client';
 import { gql } from '@apollo/client';
 
 export const getCitiesByCountry = (variables: any)=>client.query({

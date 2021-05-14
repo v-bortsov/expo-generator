@@ -1,31 +1,18 @@
-import React, {useState} from 'react';
-import { StyleSheet, SafeAreaView, ScrollView, StatusBar, Platform } from 'react-native';
-import { Button, Flex, WingBlank, Badge, Toast, Accordion, WhiteSpace, Provider, List, Modal } from '@ant-design/react-native';
-import EditScreenInfo from '../components/EditScreenInfo';
-import { Text, View } from '../components/Themed';
-import { run, loading, selectColumns, selectRows, selectLoading, fetchUserById, editColumn, removeColumn, clearEditColumn } from '../features/generator/generatorSlice';
-import { useDispatch, useSelector } from 'react-redux'
-import { isEmpty, keys, map, values, pipe, path, product, tap, none, propEq, find } from 'ramda';
-import { Ionicons, createIconSet, FontAwesome  } from '@expo/vector-icons';
-import { ColumnType } from '../react-app-env';
-import flex from '@ant-design/react-native/lib/flex';
-import { Brief } from '@ant-design/react-native/lib/list/ListItem';
-import { AddColumn } from '../components/AddColumn';
-import { from } from '@apollo/client';
-import { buildFields, unionFields } from '../utils/form';
-const glyphMap = { 'icon-name': 1234, test: '∆' };
-const CustomIcon = createIconSet(
-  glyphMap,
-  'FontName',
-  'custom-icon-font.ttf'
-);
-const Row = (props: any) => (
-  <View style={styles.row}>
-    <Text style={styles.text}>
-      {`${props.city}`}
-    </Text>
-  </View>
-);
+import { Badge, Button, Flex, List, Modal, Provider, WingBlank } from '@ant-design/react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { always, apply, assoc, clone, converge, curry, filter, isEmpty, isNil, join, lensProp, map, over, path, pathEq, pipe, product, prop, values, __ } from 'ramda';
+import React, { useReducer, useState } from 'react';
+import { StyleSheet } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { FormFields } from '../components/AddColumn';
+import { CollectList } from '../components/List';
+import { View } from '../components/Themed';
+import { changeColumn, clearEditColumn, createColumn, editColumn, fetchUserById, loading, removeColumn, run, selectColumns, selectEditColumn, selectLoading, selectRows } from '../features/generator/generatorSlice';
+import { downloadObjectAsJson } from '../utils/dom';
+import { onFinish, unionFields } from '../utils/form';
+import { reducerFields } from '../utils/hook';
+import { findByNameAndChangeScope } from '../utils/popular';
+
 const Circle = (props: any) => {
   const size = props.size || 20;
   const style = {
@@ -37,123 +24,166 @@ const Circle = (props: any) => {
     height: size,
     margin: 1,
   };
-  return <View style={style}>{props.children}</View>;
+  return <View
+    style={style}>{props.children}</View>;
 };
-function downloadObjectAsJson(
-  exportObj: any[], exportName: string
-): void {
-  const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(exportObj));
-  const downloadAnchorNode = document.createElement('a');
-  downloadAnchorNode.setAttribute(
-    'href',
-    dataStr
-  );
-  downloadAnchorNode.setAttribute(
-    'download',
-    exportName + '.json'
-  );
-  document.body.appendChild(downloadAnchorNode); // required for firefox
-  downloadAnchorNode.click();
-  downloadAnchorNode.remove();
-}
-function showToastNoMask() {
-  Toast.info(
-    'Toast without mask !!!',
-    1,
-    undefined,
-    false
-  );
-}
+
 const calcCount = pipe<any,any,any>(
   map(path(['collect', 'length'])),
   product
 )
-
+const getItemByNestedValue = (name: string)=>filter(pathEq(
+  ['name', 'value'],
+  name
+))
+const editorColumn = (columns: any)=> pipe<any, any, any, any, any>(
+  getItemByNestedValue,
+  apply(
+    __,
+    [columns]
+  ),
+  prop(0),
+  values
+)
 export default function TabOneScreen() {
   const dispatch = useDispatch()
   const rowsFromState = useSelector(selectRows);
   const columns = useSelector(selectColumns)
-  const [isAdd, setAdd] = React.useState(false)
-  // const columns = useSelector(selectColumns);
-  console.log(Platform);
+  const [isAdd, setAdd] = useState(false)
+  const edit = useSelector(selectEditColumn)
+  const [state, fieldsDispatch]  = converge(
+    curry(useReducer),
+    [
+      always(reducerFields), clone, always(assoc(
+        'fields',
+        __,
+        {}
+      ))
+    ]
+  )([])
   return (
-    <Provider style={styles.container}>
+    <Provider
+      style={styles.container}>
       <View>
-        {/* <Text style={styles.title}>Tab One#23322</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="/screens/TabOneScreen.tsx" /> */}
-        {/* <WingBlank> */}
         <Modal
           popup
-          visible={isAdd||!none(
-            propEq(
-              'edit',
-              true
-            ),
-            columns
-          )}
+          visible={!isNil(edit)||isAdd||false}
           animationType="slide-up"
         >
-          <AddColumn fields={isAdd ? unionFields.slice(
-            0,
-            1
-          ) : pipe(
-            find(propEq(
-              'edit',
-              true
-            )),
-            buildFields,
-            tap(x => console.log(
-              'checkitout',
-              x
-            ))
-          )(columns)} />
-          {/* <View style={{ paddingVertical: 20, paddingHorizontal: 20 }}>
-          <Text style={{ textAlign: 'center' }}>Content...</Text>
-          <Text style={{ textAlign: 'center' }}>Content...</Text>
-        </View> */}
-          <Button onPress={()=>{
-            dispatch(clearEditColumn({edit: false}))
-            setAdd(false)
-          }} type="primary">
-          close
-          </Button>
+          {FormFields([state, fieldsDispatch]) }
+          <View
+            style={styles.groupeButtons}>
+            <Button
+              onPress={
+                ()=>{
+                  dispatch(clearEditColumn({edit: false}))
+                  setAdd(false)
+                }
+              }
+              type="warning">
+              Cancel
+            </Button>
+            <Button
+              onPress={
+                ()=> onFinish(
+                  dispatch,
+                  state,
+                  isNil(edit) ? createColumn : changeColumn
+                )
+              }
+              style={styles.submit}
+            >
+              {isNil(edit) ? 'Add' : 'Save'}
+            </Button>
+          </View>
         </Modal>
-        <List>
-          <List.Item extra={<Ionicons name="add-circle" onPress={()=>setAdd(true)} color="green" size={16} />}/>
-          {columns.map((i: ColumnType<null>)=> (
-            <List.Item extra={<>
-              <Brief style={{ textAlign: 'right' }}>{i.type} ({i.collect.length})</Brief>
-              <Ionicons name="remove-circle" onPress={()=>dispatch(removeColumn(i))} color="red" size={16} />
-              <Ionicons onPress={()=>dispatch(editColumn({name: i.name, edit: true}))} name="pencil" color="grey" size={16} />
-            </>}>{i.label}</List.Item>
-          ))}
-        </List>
-        <WingBlank style={{ marginBottom: 5 }}>
-          <Flex justify="around">
-            <Badge text={calcCount(columns)} overflowCount={1000000}>
-              <Button loading={useSelector(selectLoading)} onPress={() => {
-                dispatch(loading(true))
-                dispatch(fetchUserById(123))
-                  .then(rows=>{
-                    dispatch(run(rows))
-                  });
-              }} type="primary"><Ionicons name="play" size={32} /> RUN
+
+        <CollectList
+          collect={columns}
+          removeColumn={pipe(
+            removeColumn,
+            dispatch
+          )}
+          editColumn={(objColumn: string)=> {
+            pipe(
+              editColumn,
+              dispatch
+            )(objColumn)
+            // console.log(editorColumn(columns)(objColumn.name));
+            fieldsDispatch({
+              name: 'updateFields',
+              value: findByNameAndChangeScope(
+                'collect',
+                over(
+                  lensProp('value'),
+                  join('\n')
+                ),
+              )(editorColumn(columns)(objColumn.name))
+            })
+          }}
+          transformItem={{
+            label: path(['label', 'value']),
+            type: path(['type', 'value']),
+            name: path(['name', 'value']),
+            item: clone,
+            length: path(['collect', 'value', 'length'])
+          }}
+          CreationItem={
+            <List.Item
+              extra={
+                <Ionicons
+                  name="add-circle"
+                  onPress={()=>{
+                    fieldsDispatch({
+                      name: 'updateFields',
+                      value: unionFields.slice(
+                        0,
+                        1
+                      ) 
+                    })
+                    setAdd(true)
+                  }}
+                  color="green"
+                  size={16} />
+              } />   
+          } 
+        />
+        <WingBlank
+          style={{ marginBottom: 5 }}>
+          <Flex
+            justify="around">
+            <Badge
+              text={calcCount(columns)}
+              overflowCount={1000000}>
+              <Button
+                loading={useSelector(selectLoading)}
+                onPress={
+                  () => {
+                    dispatch(loading(true))
+                    dispatch(fetchUserById(123))
+                      .then((rows: any[])=>{
+                        dispatch(run(rows))
+                      });
+                  }
+                }
+                type="primary"><Ionicons
+                  name="play"
+                  size={32} /> RUN
               </Button>
             </Badge>
-            <Button style={styles.button} onPress={()=>{
-              downloadObjectAsJson(
-                rowsFromState,
-                'testify'
-              )
-            }} disabled={isEmpty(rowsFromState)}> <Ionicons name="cloud-download" size={32} /> Download</Button>
+            <Button
+              style={styles.button}
+              onPress={
+                ()=> downloadObjectAsJson(
+                  rowsFromState,
+                  'testify'
+                )
+              }
+              disabled={isEmpty(rowsFromState)}> <Ionicons
+                name="cloud-download"
+                size={32} /> Download</Button>
           </Flex>
         </WingBlank>
-        {/* <SafeAreaView style={styles.row}>
-          <ScrollView  style={styles.scrollView}>
-            {rows.map((props)=><Row {...props} />)}
-          </ScrollView >
-        </SafeAreaView> */}
       </View>
     </Provider>
   );
@@ -164,11 +194,18 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    width: '60%',
+  },
+  groupeButtons:{
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+  },
+  submit: {
+    backgroundColor: 'rgb(19, 204, 98)'
   },
   row: {
     flex: 1,
-    
     alignItems: 'center',
     // paddingTop: StatusBar.currentHeight,
   },
