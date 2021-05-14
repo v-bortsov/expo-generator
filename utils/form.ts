@@ -6,7 +6,7 @@ import { always, andThen, append, assoc, both, call, chain, clone, complement, c
 import InputSpinner from 'react-native-input-spinner';
 import { Select } from '../components/CustomPicker';
 import { WeekDays } from '../components/WeekDays';
-import { customFields, integerFields, dateFields, dictionaryFields } from '../constants/Fields';
+import { customFields, integerFields, dateFields, dictionaryFields, requestByAreas } from '../constants/Fields';
 import { createColumn } from '../features/generator/generatorSlice';
 import { AppDispatch, Field } from '../react-app-env';
 // import { client } from "../client";
@@ -54,14 +54,6 @@ const ext = curry((
   pluck(name),
   join('\n')
 )(data))
-
-const extracts = {
-  countries: [['data', 'countries'], 'name', countries, []],
-  languages: [['data', 'languages'], 'name', languages, []],
-  currencies: [['data', 'currencies'], 'abbr', currencies, []],
-  cities: [['data', 'countries', 0, 'cities'], 'name', getCitiesByCountry, [{countryId: 176, limit: 10}]],
-}
-
 // pipe(
 //   prop(__, extracts),
 //   converge(converge(ext), [pipe(slice(0,2), map(always)), pipe(slice(2, 2), converge(apply, [prop(1), prop(2)]))]),
@@ -69,7 +61,7 @@ const extracts = {
 const composeFunc = pipe<any,any,any,any,any>(
   prop(
     __,
-    extracts
+    requestByAreas
   ),
   slice(
     0,
