@@ -1,15 +1,16 @@
-import { Card } from '@ant-design/react-native';
-import { always, assoc, both, clone, complement, converge, curry, isNil, join, lensProp, map, omit, over, pick, pipe, prop, propEq, split, tap, when, __ } from 'ramda';
-import React, { useReducer } from 'react';
+import React from 'react';
 import { Text, View } from 'react-native';
-import { AppDispatch, Field, FormField } from '../react-app-env';
+import { Card } from '@ant-design/react-native';
+import { always, both, converge, curry, lensProp, map, omit, over, pick, pipe, prop, propEq, when } from 'ramda';
+import { Field, FormField } from '../../react-app-env';
+import { AppDispatch } from '../store';
 import { addValueAndOnChange, getReactComponentFromCollect } from '../utils/form';
-import { reducerFields } from '../utils/hook';
+import { isCheck } from '../utils/validate';
 
 const getComponentWithProps = curry((
   Component: any, props: Field
 ): JSX.Element => <View>
-  <Text style={{ fontSize: 20}}>{props.label}:</Text>
+  <Text style={{ fontSize: 16, fontWeight: 'bold'}}>{props.label}:</Text>
   <Component
     {...pipe(
       pick(['component', 'value', 'format', 'defaultValue', 'onChange', 'options', 'rows']),
@@ -39,6 +40,7 @@ const getComponentWithProps = curry((
       omit(['component'])
     )(props)}
   />
+  {isCheck(pick(['rules', 'value'])) && <Text>validation not passed</Text>}
 </View>)
 
 export const Fields: React.FC<{state: FormField, dispatch: AppDispatch}> = ({state, dispatch}: {state: FormField, dispatch: AppDispatch}) => pipe<any, any, any>(
