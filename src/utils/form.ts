@@ -1,21 +1,10 @@
-import { InputItem, TextareaItem } from '@ant-design/react-native';
-// import DateTimePicker from '@react-native-community/datetimepicker';
-import DatePicker from '@dietime/react-native-date-picker';
 import * as moment from 'moment';
-import { always, andThen, append, assoc, both, call, chain, clone, complement, compose, cond, converge, curry, equals, find, has, includes, indexBy, isEmpty, join, lensPath, lensProp, map, mergeAll, mergeRight, objOf, omit, over, pair, path, pathEq, pick, pipe, pluck, prop, propEq, slice, split, T, tap, toPairs, transpose, when, zipObj, __ } from 'ramda';
-import InputSpinner from 'react-native-input-spinner';
-import { Select } from '../components/CustomPicker';
-import { WeekDays } from '../components/WeekDays';
-import { customFields, integerFields, dateFields, dictionaryFields, requestByAreas } from '../constants/Fields';
-import { createColumn } from '../features/generator/generatorSlice';
-import { AppDispatch, Field } from '../react-app-env';
-// import { client } from "../client";
+import { always, andThen, append, assoc, both, call, chain, clone, compose, cond, converge, curry, equals, has, includes, indexBy, join, lensPath, map, mergeRight, objOf, over, path, pathEq, pick, pipe, pluck, prop, propEq, slice, split, T, when, __ } from 'ramda';
+import { customFields, dateFields, dictionaryFields, integerFields, requestByAreas } from '../constants/Fields';
+import { AppDispatch, Field } from '../../react-app-env';
 import { countries, currencies, getCitiesByCountry, languages } from './network';
-import { findAndMerge, mergeAndRestruct } from './popular';
+import components from '../components'
 
-export const components = {
-  Input: InputItem, InputNumber: InputSpinner, DatePicker,  Select, TextArea: TextareaItem, WeekDays
-}
 export const selectByType = cond<string, any[]>([[equals('custom'), always(customFields)], [equals('integer'), always(integerFields)], [equals('dates'), always(dateFields)], [equals('dictionary'), always(dictionaryFields)], [T, always([])]])
 
 export const onFinish = curry((
@@ -43,7 +32,6 @@ export const onFinish = curry((
   slicer,
   dispatch
 )(state.fields))
-
 // const extracts = [
 //   pipe(path(['data', 'countries', 0, 'cities']), pluck('name'))
 // ]
@@ -109,11 +97,8 @@ const loadDictionaryData = curry((
       dispatch
     ))
   )(event)
-
   return event
 })
-
-
 export const extractValueOfComponent = curry((
   props, dispatch, event
 ) => cond<any, any>([
@@ -160,7 +145,6 @@ export const extractValueOfComponent = curry((
     ), compose(always(event))
   ], [equals('WeekDays'), compose(always(event))]
 ])(props))
-
 // (component: any)=> React.createElement(component)
 export const getReactComponentFromCollect = pipe<Field, any, JSX.Element>(
   prop('component'),

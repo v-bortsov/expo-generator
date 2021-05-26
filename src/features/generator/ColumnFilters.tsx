@@ -77,18 +77,8 @@ const columnsFrontier = (
 export const transformColumns = (
   ref: React.Ref<TextAreaRef>, dispatch: AppDispatch,
 ): any => map(pipe<any, any, any, any>(
-  props([
-    'label',
-    'name',
-    'label',
-    'collect'
-  ]),
-  zipObj([
-    'title',
-    'dataIndex',
-    'key',
-    'collect'
-  ]),
+  props(['label', 'name', 'label', 'collect']),
+  zipObj(['title', 'dataIndex', 'key', 'collect']),
   (obj: ColumnType<any>) => {
     const omitColumns = omit(
       ['collect'],

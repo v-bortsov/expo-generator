@@ -24,7 +24,8 @@ export const CollectList: React.FC<any> = ({collect, CreationItem, removeColumn,
       map(pipe(
         applySpec(transformItem),
         mergeRight({removeColumn, editColumn}),
-        (column: any)=> <CollectListItem {...column} />
+        CollectListItem,
+        // (column: any)=> <CollectListItem {...column} />
       )),
       prepend(CreationItem),
     )(collect)}

@@ -1,8 +1,7 @@
 import moment from 'moment'
-import { always, aperture, assoc, chain, clone, concat, converge, curry, divide, filter, flatten, ifElse, is, last, length, map, of, pair, pipe, prop, reduce, repeat, tap, when, __ } from 'ramda'
-import { DaysOfWeek, Interval } from '../react-app-env.d'
+import { always, aperture, append, assoc, chain, clone, concat, converge, curry, divide, filter, flatten, ifElse, is, last, length, map, of, pair, pipe, prop, reduce, repeat, tap, when, __ } from 'ramda'
+import { DaysOfWeek, Interval } from '../../react-app-env.d'
 import { addParam, enumToObject } from './popular'
-
 // const opt = { days: [1, 2, 3], lengthDays: 7, limit: 10, mode: 'week|range', startDate: '', endDate: '' }
 const interval = 7
 
@@ -88,10 +87,10 @@ export const transformDates = pipe<any, any, any, any, any>(
       reduce(
         (
           acc: number[], curr: number[]
-        ) => {
-          acc.push(curr[1] < curr[0] ? ((interval - curr[0]) + curr[1]) : (curr[1] - curr[0]))
-          return acc
-        },
+        ) => append(
+          curr[1] < curr[0] ? ((interval - curr[0]) + curr[1]) : (curr[1] - curr[0]),
+          acc
+        ),
         []
       )
     )

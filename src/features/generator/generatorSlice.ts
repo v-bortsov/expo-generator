@@ -1,11 +1,11 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { anyPass, append, clone, cond, ifElse, map, mergeRight, pipe, prop, propEq, reject, split, __ } from 'ramda'
 import { RootState } from '../../store'
-import { ColumnType, GeneratorState, Nullable, TypeLimiting } from '../../react-app-env.d'
 import { dayOfWeekToDate } from '../../utils/dates'
 import { random } from '../../utils/numbers'
 import { addParam, cartesianCondition, findAndMerge } from '../../utils/popular'
 import { exampleFields } from '../../constants/Examples'
+import { GeneratorState, ColumnType, TypeLimiting, Nullable } from '../../../react-app-env'
 
 export const initialState: GeneratorState = {
   columns: exampleFields,
@@ -45,15 +45,10 @@ export const generatorSlice = createSlice({
     ) => {
       state.editColumn = action.payload.name
     },
-    clearEditColumn: (
-      state, action: PayloadAction<ColumnType>
-    ) => {
-      state.editColumn = null
-    },
     createColumn: (
-      state, action: PayloadAction<ColumnType>
+      state, action: PayloadAction<ColumnType<null>>
     ) => {
-      state.columns = pipe<any, any, any>(
+      state.columns = pipe(
         ifElse(
           anyPass([
             propEq(
@@ -73,14 +68,22 @@ export const generatorSlice = createSlice({
         )
       )(action.payload)
     },
-    removeColumn: (
-      state, action: PayloadAction<ColumnType>
+    changeColumn: (
+      state: any, action: PayloadAction<ColumnType<null>>
     ) => {
-      const name = action.payload.name
+      state.columns = findAndMerge(
+        state.columns,
+        action.payload,
+        'name'
+      )
+    },
+    removeColumn: (
+      state, action: PayloadAction<ColumnType<null>>
+    ) => {
       state.columns = reject(
         propEq(
           'name',
-          name
+          action.payload.name
         ),
         state.columns
       )
@@ -101,25 +104,14 @@ export const generatorSlice = createSlice({
       state.rows = action.payload
       state.loading = false
     },
-    changeColumn: (
-      state: any, action: PayloadAction<ColumnType>
-    ) => {
-      state.columns = findAndMerge(
-        state.columns,
-        action.payload,
-        'name'
-      )
-    }
   }
 })
 
-export const { createColumn, removeColumn, changeColumn, run, setLimit, loading, editColumn, clearEditColumn } = generatorSlice.actions
+export const { createColumn, removeColumn, changeColumn, run, setLimit, loading, editColumn } = generatorSlice.actions
 // First, create the thunk
-export const fetchUserById = createAsyncThunk(
-  'users/fetchByIdStatus',
-  async (
-    userId, store
-  ) => {
+export const thunkCartesianCalc = createAsyncThunk(
+  'rows/cartesian',
+  async (store): Promise<any[]>  => {
     // store.dispatch(loading(true))
     const {columns, limiting} = store.getState().generator
     return  Promise.resolve(cartesianCondition(

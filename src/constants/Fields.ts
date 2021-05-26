@@ -6,11 +6,11 @@ export const dictionaries= [{ label: 'Cities', value: 'cities' }, { label: 'Coun
 // const { TextArea } = Input
 export const baseColumn = ['name', 'label', 'type', 'collect']
 export const unionFields = [{name: 'type', label: 'Type', rules: [{ required: true, message: 'Missing type' }], component: 'Select', options: areas, defaultValue: null}, {name: 'name', label: 'Name', rules: [{ required: true }], component: 'Input', defaultValue: 'asdfasf'}, {name: 'label', label: 'Label', rules: [{ required: true }], component: 'Input', defaultValue: null}, {name: 'collect', label: 'Collect', rules: [{ required: true }], component: 'TextArea', defaultValue: null, rows: 4}]
-export const customFields = [...unionFields]
 
+export const customFields = [...unionFields]
 export const dateFields = [...unionFields, {name: 'days', label: 'Days of week', rules: [{ required: true }], component: 'WeekDays', defaultValue: daysOfWeek }, {name: 'startDay', label: 'Start Day', rules: [{ required: true }], component: 'DatePicker',  value: new Date()}, {name: 'limit', label: 'Limit', rules: [{ required: true }], component: 'InputNumber', defaultValue: 0 },]
 export const integerFields = [...unionFields, {name: 'from', label: 'From', rules: [{ required: true }], component: 'InputNumber', defaultValue: 1 }, {name: 'to', label: 'To', rules: [{ required: true }], component: 'InputNumber', defaultValue: 10 }, {name: 'length', label: 'Length', rules: [{ required: true }], component: 'InputNumber', defaultValue: 10 },]
-export const dictionaryFields = [...unionFields, {name: 'dictionary', label: 'Type', rules: [{ required: true, message: 'Missing type' }], component: 'Select', options: dictionaries, defaultValue: null}, {name: 'collect', label: 'Collect', rules: [{ required: true }], component: 'TextArea', defaultValue: null, rows: 4},]
+export const dictionaryFields = [...unionFields, {name: 'dictionary', label: 'Type', rules: [{ required: true, message: 'Missing type' }], component: 'Select', options: dictionaries, defaultValue: null}]
 
 export const requestByAreas = {
   countries: [['data', 'countries'], 'name', countries, []],

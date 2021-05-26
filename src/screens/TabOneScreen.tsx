@@ -2,13 +2,13 @@ import { Badge, Button, Flex, List, Modal, Provider, WingBlank } from '@ant-desi
 import { Ionicons } from '@expo/vector-icons';
 import { always, apply, assoc, clone, converge, curry, filter, isEmpty, isNil, join, lensProp, map, over, path, pathEq, pipe, product, prop, values, __ } from 'ramda';
 import React, { useReducer, useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, ScrollView, SafeAreaView, StatusBar } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormFields } from '../components/AddColumn';
 import { CollectList } from '../components/List';
 import { View } from '../components/Themed';
 import { unionFields } from '../constants/Fields';
-import { changeColumn, clearEditColumn, createColumn, editColumn, fetchUserById, loading, removeColumn, run, selectColumns, selectEditColumn, selectLoading, selectRows } from '../features/generator/generatorSlice';
+import { changeColumn, createColumn, editColumn, thunkCartesianCalc, loading, removeColumn, run, selectColumns, selectEditColumn, selectLoading, selectRows } from '../features/generator/generatorSlice';
 import { downloadObjectAsJson } from '../utils/dom';
 import { onFinish } from '../utils/form';
 import { reducerFields } from '../utils/hook';
@@ -71,34 +71,37 @@ export default function TabOneScreen() {
           visible={!isNil(edit)||isAdd||false}
           animationType="slide-up"
         >
-          {FormFields([state, fieldsDispatch]) }
-          <View
-            style={styles.groupeButtons}>
-            <Button
-              onPress={
-                ()=>{
-                  dispatch(clearEditColumn({edit: false}))
-                  setAdd(false)
-                }
-              }
-              type="warning">
+          <SafeAreaView style={styles.safearea}>
+            <ScrollView style={styles.scrollView}> 
+              {FormFields([state, fieldsDispatch]) }
+              <View
+                style={styles.groupeButtons}>
+                <Button
+                  onPress={
+                    ()=>{
+                      dispatch(editColumn({name: null}))
+                      setAdd(false)
+                    }
+                  }
+                  type="warning">
               Cancel
-            </Button>
-            <Button
-              onPress={
-                ()=> onFinish(
-                  dispatch,
-                  state,
-                  isNil(edit) ? createColumn : changeColumn
-                )
-              }
-              style={styles.submit}
-            >
-              {isNil(edit) ? 'Add' : 'Save'}
-            </Button>
-          </View>
+                </Button>
+                <Button
+                  onPress={
+                    ()=> onFinish(
+                      dispatch,
+                      state,
+                      isNil(edit) ? createColumn : changeColumn
+                    )
+                  }
+                  style={styles.submit}
+                >
+                  {isNil(edit) ? 'Add' : 'Save'}
+                </Button>
+              </View>
+            </ScrollView>
+          </SafeAreaView>
         </Modal>
-
         <CollectList
           collect={columns}
           removeColumn={pipe(
@@ -110,7 +113,7 @@ export default function TabOneScreen() {
               editColumn,
               dispatch
             )(objColumn)
-            // console.log(editorColumn(columns)(objColumn.name));
+
             fieldsDispatch({
               name: 'updateFields',
               value: findByNameAndChangeScope(
@@ -161,7 +164,7 @@ export default function TabOneScreen() {
                 onPress={
                   () => {
                     dispatch(loading(true))
-                    dispatch(fetchUserById(123))
+                    dispatch(thunkCartesianCalc())
                       .then((rows: any[])=>{
                         dispatch(run(rows))
                       });
@@ -195,6 +198,14 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  safearea: {
+    flex: 1,
+    paddingTop: StatusBar.currentHeight,
+  },
+  scrollView: {
+    backgroundColor: 'pink',
+    marginHorizontal: 20,
   },
   groupeButtons:{
     flex: 1,
