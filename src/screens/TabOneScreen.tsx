@@ -66,15 +66,23 @@ export default function TabOneScreen() {
   // ADD TO FIELDS MESSAGE
 
   return (
-    <Provider
-      style={styles.container}>
-      <ScrollView>
+    <ScrollView
+      style={{ flex: 1 }}
+      automaticallyAdjustContentInsets={false}
+      showsHorizontalScrollIndicator={false}
+      showsVerticalScrollIndicator={false}
+    >
+      <Provider>
+
         <Modal
           popup
           visible={!isNil(edit)||isAdd||false}
           animationType="slide-up"
+          style={{ height: '100%'}}
         >
+       
           {FormFields([state, fieldsDispatch]) }
+
           <View
             style={styles.groupeButtons}>
             <Button
@@ -101,7 +109,9 @@ export default function TabOneScreen() {
               {isNil(edit) ? 'Add' : 'Save'}
             </Button>
           </View>
+
         </Modal>
+
         <CollectList
           collect={columns}
           removeColumn={pipe(
@@ -188,25 +198,29 @@ export default function TabOneScreen() {
                 size={32} /> Download</Button>
           </Flex>
         </WingBlank>
-      </ScrollView>
-    </Provider>
+      </Provider>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  // container: {
+  //   flex: 1,
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  //   height: Dimensions.get('window').height / 3,
+  // },
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: Dimensions.get('window').height / 3,
-  },
-  safearea: {
-    flexGrow: 1,
     paddingTop: StatusBar.currentHeight,
   },
   scrollView: {
     backgroundColor: 'pink',
     marginHorizontal: 20,
+  },
+  safearea: {
+    flexGrow: 1,
+    paddingTop: StatusBar.currentHeight,
   },
   groupeButtons:{
     flex: 1,
