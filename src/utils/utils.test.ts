@@ -110,8 +110,8 @@ it(
   () => {
     expect(isCheck({
       rules: [['isEmpty', 'field is empty'], ['isNumeric', 'need typing numeric']],
-      value: '432'
+      value: 'наеае'
     }))
-      .toEqual('need typing email')
+      .toEqual('need typing numeric')
   }
 )

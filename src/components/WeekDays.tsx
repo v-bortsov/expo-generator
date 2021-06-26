@@ -2,7 +2,7 @@ import React from 'react'
 import { always, lensProp, not, over, pipe, when, __ } from 'ramda'
 import { AppDispatch, Day } from '../react-app-env'
 import { findAndMerge } from '../utils/popular'
-import { TouchableOpacity, View, StyleSheet } from 'react-native';
+import { TouchableOpacity, View,  Text, StyleSheet } from 'react-native';
 export const setDay = (
   day: Day, days: Day[], setDays: AppDispatch
 ): any => pipe(
@@ -27,15 +27,18 @@ export const WeekDays = ({ value, onChange }: WeekDays): JSX.Element => (
     { 
       value.map((
         day: Day, idx: number
-      ) => <TouchableOpacity style={[styles.day, day.active && styles.dayActive]} key={ idx } onPress={()=> setDay(
-        day,
-        value,
-        onChange
-      )
-      }>
+      ) => <TouchableOpacity
+        style={[styles.day, day.active && styles.dayActive]}
+        key={ idx }
+        onPress={()=> setDay(
+          day,
+          value,
+          onChange
+        )
+        }>
 
-        {day.abbr}
-    </TouchableOpacity>)
+        <Text>{day.abbr}</Text>
+      </TouchableOpacity>)
     }
   </View>
 )

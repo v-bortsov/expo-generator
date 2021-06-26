@@ -1,28 +1,30 @@
-import { always, assoc, clone, converge, curry, ifElse, isNil, pipe, prepend, prop, reduce, reduced, tap, values, when } from 'ramda';
+import { always, apply, assoc, append, clone, complement, converge, curry, ifElse, isEmpty, isNil, last, pipe, prepend, prop, reduce, reduced, tap, values, when, __, includes, path, map, mergeRight, not } from 'ramda';
 import validator from 'validator';
-// console.log(validator);
+import { Field, Nullable } from '../../react-app-env';
+import { store } from '../store'
+
 const customRules = {
-  uniqNameByColumns: clone
+  uniqNameByColumns: (value: string)=> pipe<any,any,any,any>(
+    path(['generator', 'columns']),
+    map(path(['name', 'value'])),
+    includes(value),
+  )(store.getState())
 }
 const getFuncAndCall = curry((
   func: any, args: any[]
-)=>pipe(
-  // prop(
-  //   __,
-  //   validator
-  // ),
-  // curry,
-  // apply(
-  //   __,
-  //   args
-  // )
-  (funcName: string)=>{
-    console.log(
-      'args',
-      args
-    );
-    return validator[funcName](...args)
-  })(func))
+)=>pipe<any, any, any>(
+  prop(
+    __,
+    mergeRight(
+      validator,
+      customRules
+    )
+  ),
+  apply(
+    __,
+    args
+  ),
+)(func))
 const modifyArgs = (value: string)=>pipe(
   converge(
     assoc(2),
@@ -33,13 +35,13 @@ const modifyArgs = (value: string)=>pipe(
           isNil,
           always([])
         ),
-        prepend(value)
+        prepend(isNil(value) ? '' : value)
       ), clone
     ]
   ),
   values,
 )
-const validate = (
+const validate = curry((
   flag: boolean, obj: any[]
 )=>ifElse(
   always(flag),
@@ -48,39 +50,40 @@ const validate = (
     reduced
   ),
   always(null),
-)(obj)
+)(obj))
 
-export const isCheck = ({rules, value}: any): string[]=>pipe(
+export const isCheck = ({rules, value, name}: any): string[]=> reduce<any, any>(
+  (
+    acc: any, item: any[]
+  )=>pipe(
+    modifyArgs(value),
+    converge(
+      validate,
+      [
+        converge(
+          getFuncAndCall,
+          [prop(0), prop(2)]
+        ), clone
+      ]
+    ),
+  )(item),
+  []
+)(rules)
+
+export const isAllFieldsCheck = (fields: Field[]): any => pipe(
   reduce<any, any>(
     (
-      acc: any, item: any[]
-    )=>pipe(
-      modifyArgs(value),
-      converge(
-        pipe(
-          tap(x => console.log(
-            'validate',
-            x
-          )),
-          validate
-        ),
-        [
-          converge(
-            getFuncAndCall,
-            [prop(0), prop(2)]
-          ), clone
-        ]
-      ),
-      tap(x => console.log(
-        'isCheck',
-        x
-      )),
-    )(item),
-    {} ,
+      acc: any, item: any
+    )=> !isNil(isCheck(item)) ? reduced(isCheck(item)) : false,
+    []
+  ),
+  ifElse(
+    isEmpty,
+    always(false),
+    always(true)
   ),
   tap(x => console.log(
-    'test',
+    'isAllFields',
     x
   )),
-
-)(rules)
+)(fields)

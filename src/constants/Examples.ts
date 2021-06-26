@@ -3,12 +3,7 @@ export const exampleFields = [
     type: {
       name: 'type',
       label: 'Type',
-      rules: [
-        {
-          required: true,
-          message: 'Missing type'
-        }
-      ],
+      rules: [['isEmpty', 'field is empty']],
       component: 'Select',
       options: [
         {
@@ -31,11 +26,7 @@ export const exampleFields = [
     name: {
       name: 'name',
       label: 'Name',
-      rules: [
-        {
-          required: true
-        }
-      ],
+      rules: [['isEmpty', 'field is empty'], ['uniqNameByColumns', 'The name is not unique in the current scope']],
       component: 'Input',
       defaultValue: 'asdfasf',
       value: 'city'
@@ -43,11 +34,7 @@ export const exampleFields = [
     label: {
       name: 'label',
       label: 'Label',
-      rules: [
-        {
-          required: true
-        }
-      ],
+      rules: [['isEmpty', 'field is empty']],
       component: 'Input',
       defaultValue: null,
       value: 'city'
@@ -55,11 +42,7 @@ export const exampleFields = [
     collect: {
       name: 'collect',
       label: 'Collect',
-      rules: [
-        {
-          required: true
-        }
-      ],
+      rules: [['isEmpty', 'field is empty']],
       component: 'TextArea',
       defaultValue: null,
       rows: 4,

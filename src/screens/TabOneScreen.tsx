@@ -2,7 +2,7 @@ import { Badge, Button, Flex, List, Modal, Provider, WingBlank } from '@ant-desi
 import { Ionicons } from '@expo/vector-icons';
 import { always, apply, assoc, clone, converge, curry, filter, isEmpty, isNil, join, lensProp, map, over, path, pathEq, pipe, product, prop, values, __ } from 'ramda';
 import React, { useReducer, useState } from 'react';
-import { StyleSheet, ScrollView, SafeAreaView, StatusBar } from 'react-native';
+import { StyleSheet, ScrollView, SafeAreaView, StatusBar, Dimensions } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormFields } from '../components/AddColumn';
 import { CollectList } from '../components/List';
@@ -13,6 +13,7 @@ import { downloadObjectAsJson } from '../utils/dom';
 import { onFinish } from '../utils/form';
 import { reducerFields } from '../utils/hook';
 import { findByNameAndChangeScope } from '../utils/popular';
+import { isAllFieldsCheck } from '../utils/validate';
 
 const Circle = (props: any) => {
   const size = props.size || 20;
@@ -62,45 +63,44 @@ export default function TabOneScreen() {
       ))
     ]
   )([])
+  // ADD TO FIELDS MESSAGE
+
   return (
     <Provider
       style={styles.container}>
-      <View>
+      <ScrollView>
         <Modal
           popup
           visible={!isNil(edit)||isAdd||false}
           animationType="slide-up"
         >
-          <SafeAreaView style={styles.safearea}>
-            <ScrollView style={styles.scrollView}> 
-              {FormFields([state, fieldsDispatch]) }
-              <View
-                style={styles.groupeButtons}>
-                <Button
-                  onPress={
-                    ()=>{
-                      dispatch(editColumn({name: null}))
-                      setAdd(false)
-                    }
-                  }
-                  type="warning">
-              Cancel
-                </Button>
-                <Button
-                  onPress={
-                    ()=> onFinish(
-                      dispatch,
-                      state,
-                      isNil(edit) ? createColumn : changeColumn
-                    )
-                  }
-                  style={styles.submit}
-                >
-                  {isNil(edit) ? 'Add' : 'Save'}
-                </Button>
-              </View>
-            </ScrollView>
-          </SafeAreaView>
+          {FormFields([state, fieldsDispatch]) }
+          <View
+            style={styles.groupeButtons}>
+            <Button
+              onPress={
+                ()=>{
+                  dispatch(editColumn({name: null}))
+                  setAdd(false)
+                }
+              }
+              type="warning">
+                  Cancel
+            </Button>
+            <Button
+              disabled={isAllFieldsCheck(state.fields)}
+              onPress={
+                ()=> onFinish(
+                  dispatch,
+                  state,
+                  isNil(edit) ? createColumn : changeColumn
+                )
+              }
+              style={styles.submit}
+            >
+              {isNil(edit) ? 'Add' : 'Save'}
+            </Button>
+          </View>
         </Modal>
         <CollectList
           collect={columns}
@@ -188,7 +188,7 @@ export default function TabOneScreen() {
                 size={32} /> Download</Button>
           </Flex>
         </WingBlank>
-      </View>
+      </ScrollView>
     </Provider>
   );
 }
@@ -198,9 +198,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    height: Dimensions.get('window').height / 3,
   },
   safearea: {
-    flex: 1,
+    flexGrow: 1,
     paddingTop: StatusBar.currentHeight,
   },
   scrollView: {
@@ -220,10 +221,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     // paddingTop: StatusBar.currentHeight,
-  },
-  scrollView: {
-    backgroundColor: 'pink',
-    marginHorizontal: 20,
   },
   button: {
     textAlignVertical: 'middle',
