@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
     // paddingTop: StatusBar.currentHeight,
   },
   button: {
-    textAlignVertical: 'middle',
-    margin: '10px'
+    textAlignVertical: 'center',
+    margin: 10
   }
 });
