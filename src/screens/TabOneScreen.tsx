@@ -73,16 +73,13 @@ export default function TabOneScreen() {
       showsVerticalScrollIndicator={false}
     >
       <Provider>
-
         <Modal
           popup
           visible={!isNil(edit)||isAdd||false}
           animationType="slide-up"
           style={{ height: '100%'}}
         >
-       
           {FormFields([state, fieldsDispatch]) }
-
           <View
             style={styles.groupeButtons}>
             <Button

@@ -6,7 +6,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "test": "jest --watchAll"
+    "test": "jest --watchAll",
+    "sonar":  "node sonar-project.js"
   },
   "jest": {
     "preset": "jest-expo"
@@ -78,6 +79,7 @@
     "eslint-plugin-react": "^7.23.2",
     "eslint-plugin-react-hooks": "^4.2.0",
     "jest-expo": "~41.0.0",
+    "sonarqube-scanner": "^2.8.1",
     "typescript": "~4.0.0"
   },
   "private": true
