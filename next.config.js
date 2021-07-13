@@ -12,7 +12,11 @@ const withImages = require('next-images');
 //     webpack5: false
 //   })
 // );
-module.exports = withPlugins([withFonts, withImages, [withExpo, { projectRoot: __dirname, webpack5: false }]], {
+// const withTM = require('next-transpile-modules')([
+//   'expo-next-react-navigation',
+//   // you can add other modules that need traspiling here
+// ])
+module.exports = withPlugins([/* withTM, */ withFonts, withImages, [withExpo, { projectRoot: __dirname, webpack5: false }]], {
   /* next.config.js code */
 })
 // module.exports = withExpo({
