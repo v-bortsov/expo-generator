@@ -1,7 +1,8 @@
-import { always, append, assoc, chain, clone, converge, curry, filter, flatten, is, length, map, mergeRight, objOf, of, omit, path, pick, pipe, pluck, prop, propEq, reject, slice, splitAt, transpose, values, when, zipObj, __, xprod, adjust, findIndex } from 'ramda';
+import { always, append, assoc, chain, clone, converge, curry, filter, flatten, is, length, map, mergeRight, objOf, of, omit, path, pick, pipe, pluck, prop, propEq, reject, slice, splitAt, transpose, values, when, zipObj, __, xprod, adjust, findIndex, tap, cond, find, hasPath, identity, pathEq, product, T } from 'ramda';
 // import { multipledParts } from 'ramda-combo';
 // import {Maybe} from 'ramda-fantasy'
-import { ColumnType, ObjectLiteral, Option, OptionDate, OptionNumber, TypeLimiting } from '../../react-app-env';
+import { ColumnType, Field, ObjectLiteral, Option, OptionDate, OptionNumber, TypeLimiting } from '../../react-app-env';
+
 const RF = require('ramda-fantasy'),
   Maybe = RF.Maybe,
   Just    = Maybe.Just,
@@ -30,6 +31,27 @@ export const sliceAndTranspose = curry((
   ),
   transpose
 )(columns))
+export const multipleCount = pipe<any,any,any,any>(
+  filter(hasPath(['collect', 'value', 'length'])),
+  map(path(['collect', 'value', 'length'])),
+  values,
+  product
+)
+export const calcCount = (
+  columns: any, limiting: (null | string | number)
+)=>cond([
+  [is(Number), identity], [
+    is(String), pipe(
+      pathEq(['name', 'value']),
+      find(
+        __,
+        columns
+      ),
+      path(['collect', 'value']),
+      length
+    )
+  ], [T, always(multipleCount(columns))]
+])(limiting)
 /**
  *   CartesianProduct Non using Ramda
   const result = parts.reduce((
@@ -49,12 +71,12 @@ export const propFilterAndPluck = (
   reject(propEq(
     propNameEq,
     propValue
-  )),
+  )), 
   pluck(propPluck)
 )
 export const cartesianCondition: any = (
   columns: ColumnType<OptionNumber | OptionDate | Option>[], limiting: TypeLimiting
-) => pipe<any, any, any, any, any>(
+) => pipe<any, any, any, any, any, any>(
   propFilterAndPluck(
     'name',
     limiting,
@@ -73,6 +95,16 @@ export const cartesianCondition: any = (
         'name',
         limiting
       )
+    )
+  ),
+  when(
+    always(is(
+      Number,
+      limiting
+    )),
+    slice(
+      0,
+      limiting
     )
   ),
   map(pipe<any, any, any>(
@@ -105,10 +137,10 @@ export const enumToObject: any = pipe<any, any, any, any>(
   )
 )
 
-export const findByNameAndChangeScope: any = (
+export const findByNameAndChangeScope = (
   findBy: string, change: any
-) => converge(
-  adjust(
+): typeof converge => converge(
+  adjust<any>(
     __,
     change
   ),

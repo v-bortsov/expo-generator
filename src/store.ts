@@ -3,10 +3,11 @@ import generatorReducer from './features/generator/generatorSlice'
 import logger from 'redux-logger'
 
 const middleware = getDefaultMiddleware({
-  immutableCheck: false,
-  serializableCheck: false,
+  immutableCheck: true,
+  serializableCheck: true,
   thunk: true,
-});
+})
+  .concat(logger);
 export const store = configureStore({
   reducer: {
     generator: generatorReducer

@@ -1,7 +1,7 @@
+// import { Card } from '@ant-design/react-native';
+import { always, both, converge, curry, lensProp, map, omit, over, pick, pipe, prop, propEq, when } from 'ramda';
 import React from 'react';
 import { Text, View } from 'react-native';
-import { Card } from '@ant-design/react-native';
-import { always, both, converge, curry, isNil, lensProp, map, omit, over, pick, pipe, prop, propEq, tap, when } from 'ramda';
 import { Field, FormField } from '../../react-app-env';
 import { AppDispatch } from '../store';
 import { addValueAndOnChange, getReactComponentFromCollect } from '../utils/form';
@@ -40,11 +40,10 @@ const getComponentWithProps = curry((
       omit(['component'])
     )(props)}
   />
-  { !propEq(
-    'rules',
-    [],
+  { isCheck(pick(
+    ['rules', 'value', 'name'],
     props
-  ) && 
+  )) && 
   <Text style={{ fontSize: 10, fontWeight: 'normal', color: 'white', backgroundColor: 'red'}}>
     {isCheck(pick(
       ['rules', 'value', 'name'],
@@ -61,14 +60,14 @@ export const Fields: React.FC<{state: FormField, dispatch: AppDispatch}> = ({sta
   ))
 )(state)
 
-export const FormFields = ([state, dispatch]: any): JSX.Element=>(
+export const FormFields = ({state, fieldsDispatch: dispatch}: any): JSX.Element=>(
   <View>
-    <Card>
+    {/* <Card>
       <Card.Header title="Add Column"  extra="this is extra" />
-      <Card.Body>
-        <Fields {...{state, dispatch}} />
-      </Card.Body>
-    </Card>
+      <Card.Body> */}
+    <Fields {...{state, dispatch}} />
+    {/* </Card.Body>
+    </Card> */}
   </View>
 )
 

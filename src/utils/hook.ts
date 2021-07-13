@@ -35,7 +35,7 @@ const actionOnTypeField = updateFields(converge(
         )
       ]
     ), pipe(
-      path([1,'value']),
+      path<any>([1,'value']),
       selectByType
     )
   ]

@@ -1,4 +1,4 @@
-# Fake data new age
+# Faker of data the new age
 ## SonarQube
 ### Start it
 ```bash

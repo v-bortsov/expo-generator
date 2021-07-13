@@ -1,4 +1,4 @@
-import moment from 'moment'
+import moment, { Moment, MomentObjectOutput } from 'moment'
 import { always, aperture, append, assoc, chain, clone, concat, converge, curry, divide, filter, flatten, ifElse, is, last, length, map, of, pair, pipe, prop, reduce, repeat, tap, when, __ } from 'ramda'
 import { DaysOfWeek, Interval } from '../../react-app-env.d'
 import { addParam, enumToObject } from './popular'
@@ -27,7 +27,7 @@ export const filterAndPropDayNumber = pipe<any, any, any>(
     )
   ))
 )
-export const addDaysToDate: any = curry((
+export const addDaysToDate = curry((
   currentDate: string,
   count: number, 
   flag: Interval

@@ -1,39 +1,21 @@
-import { Badge, Button, Flex, List, Modal, Provider, WingBlank } from '@ant-design/react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { always, apply, assoc, clone, converge, curry, filter, isEmpty, isNil, join, lensProp, map, over, path, pathEq, pipe, product, prop, values, __ } from 'ramda';
 import React, { useReducer, useState } from 'react';
-import { StyleSheet, ScrollView, SafeAreaView, StatusBar, Dimensions } from 'react-native';
+import { ActivityIndicator, Alert, Button, Modal, ScrollView, StatusBar, StyleSheet, Text } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
+import { always, apply, assoc, clone, converge, curry, filter, isEmpty, isNil, join, lensProp, over, path, pathEq, pipe, prop, tap, values, __ } from 'ramda';
+import { Colors } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormFields } from '../components/AddColumn';
+import MyComponent from '../components/AppBar';
 import { CollectList } from '../components/List';
+import { RadioGroup } from '../components/RadioGroup';
 import { View } from '../components/Themed';
-import { unionFields } from '../constants/Fields';
-import { changeColumn, createColumn, editColumn, thunkCartesianCalc, loading, removeColumn, run, selectColumns, selectEditColumn, selectLoading, selectRows } from '../features/generator/generatorSlice';
+import { changeColumn, createColumn, editColumn, loading, removeColumn, run, selectColumns, selectEditColumn, selectLimiting, selectLoading, selectRows, thunkCartesianCalc } from '../features/generator/generatorSlice';
 import { downloadObjectAsJson } from '../utils/dom';
 import { onFinish } from '../utils/form';
 import { reducerFields } from '../utils/hook';
-import { findByNameAndChangeScope } from '../utils/popular';
+import { calcCount, findByNameAndChangeScope } from '../utils/popular';
 import { isAllFieldsCheck } from '../utils/validate';
 
-const Circle = (props: any) => {
-  const size = props.size || 20;
-  const style = {
-    borderRadius: size / 2,
-    backgroundColor: '#527fe4',
-    justifyContent:'center',
-    alignItems:'center',
-    width: size,
-    height: size,
-    margin: 1,
-  };
-  return <View
-    style={style}>{props.children}</View>;
-};
-
-const calcCount = pipe<any,any,any>(
-  map(path(['collect', 'length'])),
-  product
-)
 const getItemByNestedValue = (name: string)=>filter(pathEq(
   ['name', 'value'],
   name
@@ -48,11 +30,7 @@ const editorColumn = (columns: any)=> pipe<any, any, any, any, any>(
   values
 )
 export default function TabOneScreen() {
-  const dispatch = useDispatch()
-  const rowsFromState = useSelector(selectRows);
-  const columns = useSelector(selectColumns)
   const [isAdd, setAdd] = useState(false)
-  const edit = useSelector(selectEditColumn)
   const [state, fieldsDispatch]  = converge(
     curry(useReducer),
     [
@@ -63,25 +41,34 @@ export default function TabOneScreen() {
       ))
     ]
   )([])
-  // ADD TO FIELDS MESSAGE
-
+  const dispatch = useDispatch()
+  const rowsFromState = useSelector(selectRows);
+  const columns = useSelector(selectColumns)
+  const edit = useSelector(selectEditColumn)
+  const getLoading = useSelector(selectLoading)
+  const limiting = useSelector(selectLimiting)
+  
   return (
-    <ScrollView
-      style={{ flex: 1 }}
-      automaticallyAdjustContentInsets={false}
-      showsHorizontalScrollIndicator={false}
-      showsVerticalScrollIndicator={false}
-    >
-      <Provider>
+    <View style={{flex: 1}}>
+      <ScrollView
+        automaticallyAdjustContentInsets={false}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+      >
+        <MyComponent {...{setAdd, fieldsDispatch}}/>
+        <RadioGroup/>
         <Modal
-          popup
+          animationType="slide"
+          transparent={false}
           visible={!isNil(edit)||isAdd||false}
-          animationType="slide-up"
-          style={{ height: '100%'}}
+          onRequestClose={() => {
+            Alert.alert('Modal has been closed.');
+          // setModalVisible(!modalVisible);
+          }}
         >
-          {FormFields([state, fieldsDispatch]) }
+          <FormFields {...{state, fieldsDispatch}} />
           <View
-            style={styles.groupeButtons}>
+            style={styles.groupButtons}>
             <Button
               onPress={
                 ()=>{
@@ -89,27 +76,28 @@ export default function TabOneScreen() {
                   setAdd(false)
                 }
               }
-              type="warning">
-                  Cancel
-            </Button>
+              title={'Cancel'}
+              color="#fc929e"
+            />
             <Button
               disabled={isAllFieldsCheck(state.fields)}
-              onPress={
+              onPress={pipe(
                 ()=> onFinish(
                   dispatch,
                   state,
                   isNil(edit) ? createColumn : changeColumn
-                )
+                ),
+                tap(()=>setAdd(false))
+              )
               }
-              style={styles.submit}
-            >
-              {isNil(edit) ? 'Add' : 'Save'}
-            </Button>
+              // style={styles.submit}
+              color={'#07c19b'}
+              title={isNil(edit) ? 'Add' : 'Save'}
+            />
           </View>
-
         </Modal>
-
         <CollectList
+          style={{flex: 1}}
           collect={columns}
           removeColumn={pipe(
             removeColumn,
@@ -139,64 +127,42 @@ export default function TabOneScreen() {
             item: clone,
             length: path(['collect', 'value', 'length'])
           }}
-          CreationItem={
-            <List.Item
-              extra={
-                <Ionicons
-                  name="add-circle"
-                  onPress={()=>{
-                    fieldsDispatch({
-                      name: 'updateFields',
-                      value: unionFields.slice(
-                        0,
-                        1
-                      ) 
-                    })
-                    setAdd(true)
-                  }}
-                  color="green"
-                  size={16} />
-              } />   
-          } 
         />
-        <WingBlank
-          style={{ marginBottom: 5 }}>
-          <Flex
-            justify="around">
-            <Badge
-              text={calcCount(columns)}
-              overflowCount={1000000}>
-              <Button
-                loading={useSelector(selectLoading)}
-                onPress={
-                  () => {
-                    dispatch(loading(true))
-                    dispatch(thunkCartesianCalc())
-                      .then((rows: any[])=>{
-                        dispatch(run(rows))
-                      });
-                  }
-                }
-                type="primary"><Ionicons
-                  name="play"
-                  size={32} /> RUN
-              </Button>
-            </Badge>
-            <Button
-              style={styles.button}
-              onPress={
-                ()=> downloadObjectAsJson(
-                  rowsFromState,
-                  'testify'
-                )
-              }
-              disabled={isEmpty(rowsFromState)}> <Ionicons
-                name="cloud-download"
-                size={32} /> Download</Button>
-          </Flex>
-        </WingBlank>
-      </Provider>
-    </ScrollView>
+      </ScrollView>
+      <View style={[styles.row]}>
+        <FontAwesome.Button
+          name="gamepad"
+          backgroundColor="#06bcee"
+          disabled={columns.length<=1||getLoading}
+          onPress={
+            () => {
+              dispatch(loading(true))
+              dispatch(thunkCartesianCalc())
+                .then((rows: any)=>{
+                  dispatch(run(rows.payload))
+                });
+            }
+          }>
+          <Text>Run ({columns.length<=1 ? 0 : calcCount(
+            columns,
+            limiting
+          )})</Text>
+          {
+            getLoading &&
+            <ActivityIndicator animating={true} color={Colors.red800} />}
+        </FontAwesome.Button>
+        <FontAwesome.Button
+          name="cloud-download"
+          backgroundColor={isEmpty(rowsFromState) ? 'grey' : '#3b5998'}
+          disabled={isEmpty(rowsFromState)}
+          onPress={()=> downloadObjectAsJson(
+            rowsFromState,
+            'testify'
+          )}>
+          Download
+        </FontAwesome.Button>
+      </View>
+    </View>
   );
 }
 
@@ -219,7 +185,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingTop: StatusBar.currentHeight,
   },
-  groupeButtons:{
+  groupButtons:{
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
@@ -231,6 +197,8 @@ const styles = StyleSheet.create({
   row: {
     flex: 1,
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-around'
     // paddingTop: StatusBar.currentHeight,
   },
   button: {

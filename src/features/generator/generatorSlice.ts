@@ -1,11 +1,11 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { anyPass, append, clone, cond, ifElse, map, mergeRight, pipe, prop, propEq, reject, split, __ } from 'ramda'
+import { anyPass, append, clone, cond, converge, evolve, ifElse, map, mergeRight, mergeWith, objOf, pathEq, pipe, pluck, prop, propEq, reject, split, tap, values, __ } from 'ramda'
+import { ColumnType, GeneratorState, Nullable, TypeLimiting } from '../../../react-app-env'
+import { exampleFields } from '../../constants/Examples'
 import { RootState } from '../../store'
 import { dayOfWeekToDate } from '../../utils/dates'
 import { random } from '../../utils/numbers'
 import { addParam, cartesianCondition, findAndMerge } from '../../utils/popular'
-import { exampleFields } from '../../constants/Examples'
-import { GeneratorState, ColumnType, TypeLimiting, Nullable } from '../../../react-app-env'
 
 export const initialState: GeneratorState = {
   columns: exampleFields,
@@ -14,15 +14,20 @@ export const initialState: GeneratorState = {
   limiting: null,
   loading: false
 }
-const customType = addParam(
-  'collect',
-  pipe(
+// const customType = addParam(
+//   'collect',
+//   pipe(
+//     prop<any, any>('collect'),
+//     split('\n')
+//   ),
+//   [clone]
+// )
+const customType = evolve({
+  collect: {value: pipe(
     prop<any, any>('collect'),
     split('\n')
-  ),
-  [clone]
-)
-
+  )}
+}) 
 const bindTypeToHandler = cond([
   [
     propEq(
@@ -51,17 +56,30 @@ export const generatorSlice = createSlice({
       state.columns = pipe(
         ifElse(
           anyPass([
-            propEq(
-              'type',
+            pathEq(
+              ['type', 'value'],
               'custom'
-            ), propEq(
-              'type',
+            ), pathEq(
+              ['type', 'value'],
               'dictionary'
             )
           ]),
-          customType,
-          bindTypeToHandler
+          clone,
+          converge(
+            mergeWith(mergeRight),
+            [
+              clone, pipe(
+                pluck('value'),
+                bindTypeToHandler,
+                map(objOf('value'))
+              )
+            ]
+          ),
         ),
+        tap(x => console.log(
+          'add after ifelse',
+          x
+        )),
         append(
           __,
           state.columns
@@ -111,11 +129,18 @@ export const { createColumn, removeColumn, changeColumn, run, setLimit, loading,
 // First, create the thunk
 export const thunkCartesianCalc = createAsyncThunk(
   'rows/cartesian',
-  async (store): Promise<any[]>  => {
-    // store.dispatch(loading(true))
+  async (
+    _, store
+  ): Promise<any[]>  => {
+    
+    store.dispatch(loading(true))
     const {columns, limiting} = store.getState().generator
+
     return  Promise.resolve(cartesianCondition(
-      columns,
+      map(
+        pluck('value'),
+        columns
+      ),
       limiting
     ))
   }

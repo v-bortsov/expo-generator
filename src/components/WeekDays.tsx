@@ -1,8 +1,8 @@
-import React from 'react'
-import { always, lensProp, not, over, pipe, when, __ } from 'ramda'
-import { AppDispatch, Day } from '../react-app-env'
-import { findAndMerge } from '../utils/popular'
-import { TouchableOpacity, View,  Text, StyleSheet } from 'react-native';
+import { lensProp, not, over, pipe, tap, __ } from 'ramda';
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { AppDispatch, Day } from '../react-app-env';
+import { findAndMerge } from '../utils/popular';
 export const setDay = (
   day: Day, days: Day[], setDays: AppDispatch
 ): any => pipe(
@@ -22,22 +22,33 @@ type WeekDays = {
   value: Day[],
   onChange: any
 }
+const Circle = (props: any) => {
+  const size = props.size || 40;
+  const style = {
+    borderRadius: size / 2,
+    backgroundColor: !props.active ? 'rgb(255, 255, 255)' : 'steelblue',
+    justifyContent:'center',
+    alignItems:'center',
+    width: size,
+    height: size,
+    margin: 1,
+  };
+  return <View style={style}>{props.children}</View>;
+};
 export const WeekDays = ({ value, onChange }: WeekDays): JSX.Element => (
   <View style={styles.container}>
     { 
       value.map((
         day: Day, idx: number
       ) => <TouchableOpacity
-        style={[styles.day, day.active && styles.dayActive]}
-        key={ idx }
+        // style={[styles.day, day.active && styles.dayActive]}
         onPress={()=> setDay(
           day,
           value,
           onChange
         )
         }>
-
-        <Text>{day.abbr}</Text>
+        <Circle key={ idx } active={day.active}><Text>{day.abbr}</Text></Circle>
       </TouchableOpacity>)
     }
   </View>
@@ -61,5 +72,3 @@ const styles = StyleSheet.create({
     backgroundColor: 'steelblue',
   }
 });
-console.log(styles);
-

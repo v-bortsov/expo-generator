@@ -2,7 +2,23 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
-    "jsx": "react",
-    "types":["jest"]
-  }
+    "jsx": "preserve",
+    "types": [
+      "jest"
+    ],
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "isolatedModules": true,
+    "typeRoots": [
+      "./node_modules/@types",
+      "./next-env.d.ts",
+      "./react-app-env.d.ts",
+    ]
+  },
+  "include": [
+    "next-env.d.ts",
+    "react-app-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+]
 }

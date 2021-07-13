@@ -1,5 +1,5 @@
-import * as moment from 'moment';
-import { always, andThen, append, assoc, both, call, chain, clone, compose, cond, converge, curry, equals, has, includes, indexBy, join, lensPath, map, mergeRight, objOf, over, path, pathEq, pick, pipe, pluck, prop, propEq, slice, split, T, when, __ } from 'ramda';
+import moment from 'moment';
+import { always, andThen, append, assoc, both, call, chain, clone, compose, cond, converge, curry, equals, has, includes, indexBy, join, lensPath, map, mergeRight, objOf, over, path, pathEq, pick, pipe, pluck, prop, propEq, slice, split, T, tap, when, __ } from 'ramda';
 import { customFields, dateFields, dictionaryFields, integerFields, requestByAreas } from '../constants/Fields';
 import { AppDispatch, Field } from '../../react-app-env';
 import { countries, currencies, getCitiesByCountry, languages } from './network';
@@ -26,9 +26,13 @@ export const onFinish = curry((
     ),
     over(
       lensPath(['collect', 'value']),
-      split('\n')
+      split<any>('\n')
     ),
   ),
+  tap(x => console.log(
+    'onFinish',
+    x
+  )),
   slicer,
   dispatch
 )(state.fields))
@@ -129,7 +133,7 @@ export const extractValueOfComponent = curry((
     propEq(
       'component',
       'DatePicker'
-    ), pipe(always(event),
+    ), pipe(always(event.date),
       // (e)=>moment(
       //   e,
       //   'DD.MM.YYYY'
@@ -143,7 +147,12 @@ export const extractValueOfComponent = curry((
         ['Input', 'InputNumber', 'Select', 'TextArea']
       )
     ), compose(always(event))
-  ], [equals('WeekDays'), compose(always(event))]
+  ], [
+    propEq(
+      'component',
+      'WeekDays'
+    ), compose(always(event))
+  ]
 ])(props))
 // (component: any)=> React.createElement(component)
 export const getReactComponentFromCollect = pipe<Field, any, JSX.Element>(
@@ -162,7 +171,7 @@ export const addValueAndOnChange: any = (dispatch: AppDispatch)=>chain(
       mergeRight,
       [
         pick(['name']), always(pipe<any, any, any>(
-        // !! multipleStoreChanges
+          // !! multipleStoreChanges
           extractValueOfComponent(
             props,
             dispatch

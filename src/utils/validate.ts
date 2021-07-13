@@ -1,13 +1,26 @@
-import { always, apply, assoc, append, clone, complement, converge, curry, ifElse, isEmpty, isNil, last, pipe, prepend, prop, reduce, reduced, tap, values, when, __, includes, path, map, mergeRight, not } from 'ramda';
+import { always, apply, assoc, clone, complement, converge, curry, evolve, ifElse, includes, isEmpty, isNil, map, mergeRight, path, paths, pipe, prepend, prop, propEq, reduce, reduced, tap, values, when, whereEq, zipObj, __ } from 'ramda';
 import validator from 'validator';
-import { Field, Nullable } from '../../react-app-env';
-import { store } from '../store'
+import { Field } from '../../react-app-env';
+import { store } from '../store';
 
 const customRules = {
   uniqNameByColumns: (value: string)=> pipe<any,any,any,any>(
-    path(['generator', 'columns']),
-    map(path(['name', 'value'])),
-    includes(value),
+    paths([['generator', 'columns'],['generator', 'editColumn']]),
+    zipObj(['columns', 'editColumn']),
+    evolve({
+      columns: map(path(['name', 'value']))
+    }),
+    ifElse(
+      whereEq({
+        'editColumn':
+        null
+      }),
+      pipe(
+        prop('columns'),
+        includes(value)
+      ),
+      always(false)
+    )
   )(store.getState())
 }
 const getFuncAndCall = curry((
@@ -54,7 +67,7 @@ const validate = curry((
 
 export const isCheck = ({rules, value, name}: any): string[]=> reduce<any, any>(
   (
-    acc: any, item: any[]
+    _: any, item: any[]
   )=>pipe(
     modifyArgs(value),
     converge(
@@ -73,17 +86,9 @@ export const isCheck = ({rules, value, name}: any): string[]=> reduce<any, any>(
 export const isAllFieldsCheck = (fields: Field[]): any => pipe(
   reduce<any, any>(
     (
-      acc: any, item: any
+      _: any, item: any
     )=> !isNil(isCheck(item)) ? reduced(isCheck(item)) : false,
     []
   ),
-  ifElse(
-    isEmpty,
-    always(false),
-    always(true)
-  ),
-  tap(x => console.log(
-    'isAllFields',
-    x
-  )),
+  complement(isEmpty)
 )(fields)
