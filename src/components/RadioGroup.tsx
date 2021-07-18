@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectColumns, selectLimiting, setLimit } from '../features/generator/generatorSlice'
 import { ColumnType } from '../../react-app-env'
-import { RadioButton } from 'react-native-paper';
+import { Radio, Center, NativeBaseProvider } from 'native-base'
 import { View, Text } from 'react-native'
 import {Select} from '../components/CustomPicker'
 import Slider from '@react-native-community/slider';
@@ -22,21 +22,20 @@ export function RadioGroup (): JSX.Element {
 
   return (
     <View style={{flex: 1, flexDirection: 'row'}}>
-      <RadioButton.Group
-        onValueChange={(value: any): void => {
+      <Radio.Group
+        name="myRadioGroup"
+        value={group}
+        onChange={(value: any): void => {
           if (value === 'all') {
             dispatch(setLimit(null)) 
           } setGroup(value) 
         }}
-        value={group}>
+      >
         {map(
-          (v: any): JSX.Element=> <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-            <RadioButton value={v.value} />
-            <Text>{v.label}</Text>
-          </View>,
+          (v: any): JSX.Element=> <Radio value={v.value} my={1}>{v.label}</Radio>,
           options
         )}
-      </RadioButton.Group>
+      </Radio.Group>
       <View>
         {equals(
           'limit',

@@ -9,7 +9,7 @@ export const unionFields = [{name: 'type', label: 'Type', rules: [['isEmpty', 'f
 
 export const customFields = [...unionFields]
 export const dateFields = [...unionFields, {name: 'days', label: 'Days of week', rules: [], component: 'WeekDays', defaultValue: daysOfWeek }, {name: 'startDay', label: 'Start Day', rules: [], component: 'DatePicker',  value: new Date()}, {name: 'limit', label: 'Limit', rules: [], component: 'InputNumber', defaultValue: 0 }]
-export const integerFields = [...unionFields, {name: 'from', label: 'From', rules: [], component: 'InputNumber', defaultValue: 1 }, {name: 'to', label: 'To', rules: [], component: 'InputNumber', defaultValue: 10 }, {name: 'length', label: 'Length', rules: [], component: 'InputNumber', defaultValue: 10 }]
+export const integerFields = [...unionFields, {name: 'from-to', label: 'From To', rules: [], component: 'Multislider', defaultValue: [1,10] }, {name: 'length', label: 'Length', rules: [], component: 'InputNumber', defaultValue: 10 }]
 export const dictionaryFields = [...unionFields, {name: 'dictionary', label: 'Type', rules: [['isEmpty', 'field is empty']], component: 'Select', options: dictionaries, defaultValue: null}]
 
 export const requestByAreas = {

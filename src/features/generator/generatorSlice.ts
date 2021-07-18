@@ -76,10 +76,6 @@ export const generatorSlice = createSlice({
             ]
           ),
         ),
-        tap(x => console.log(
-          'add after ifelse',
-          x
-        )),
         append(
           __,
           state.columns

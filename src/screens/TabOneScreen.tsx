@@ -1,13 +1,13 @@
+import { FontAwesome } from '@expo/vector-icons';
+import { always, apply, assoc, clone, complement, converge, curry, filter, isEmpty, isNil, join, lensProp, over, path, pathEq, pipe, prop, tap, values, when, __ } from 'ramda';
 import React, { useReducer, useState } from 'react';
 import { ActivityIndicator, Alert, Button, Modal, ScrollView, StatusBar, StyleSheet, Text } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
-import { always, apply, assoc, clone, converge, curry, filter, isEmpty, isNil, join, lensProp, over, path, pathEq, pipe, prop, tap, values, __ } from 'ramda';
-import { Colors } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormFields } from '../components/AddColumn';
-import MyComponent from '../components/AppBar';
+import AppBar from '../components/AppBar';
 import { CollectList } from '../components/List';
 import { RadioGroup } from '../components/RadioGroup';
+import Stagger from '../components/Stagger';
 import { View } from '../components/Themed';
 import { changeColumn, createColumn, editColumn, loading, removeColumn, run, selectColumns, selectEditColumn, selectLimiting, selectLoading, selectRows, thunkCartesianCalc } from '../features/generator/generatorSlice';
 import { downloadObjectAsJson } from '../utils/dom';
@@ -15,7 +15,7 @@ import { onFinish } from '../utils/form';
 import { reducerFields } from '../utils/hook';
 import { calcCount, findByNameAndChangeScope } from '../utils/popular';
 import { isAllFieldsCheck } from '../utils/validate';
-
+// import MultiSlider from '@ptomasroos/react-native-multi-slider'
 const getItemByNestedValue = (name: string)=>filter(pathEq(
   ['name', 'value'],
   name
@@ -47,16 +47,28 @@ export default function TabOneScreen() {
   const edit = useSelector(selectEditColumn)
   const getLoading = useSelector(selectLoading)
   const limiting = useSelector(selectLimiting)
+  console.log(state);
   
   return (
     <View style={{flex: 1}}>
+
+      <View style={styles.abs}>
+        <Stagger {...{setAdd, fieldsDispatch}} />
+      </View>
       <ScrollView
         automaticallyAdjustContentInsets={false}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
       >
-        <MyComponent {...{setAdd, fieldsDispatch}}/>
+        <AppBar {...{setAdd, fieldsDispatch}}/>
+        {/* <MultiSlider
+          min={0}
+          max={10}
+          values={[0]}
+
+        /> */}
         <RadioGroup/>
+        
         <Modal
           animationType="slide"
           transparent={false}
@@ -115,7 +127,10 @@ export default function TabOneScreen() {
                 'collect',
                 over(
                   lensProp('value'),
-                  join('\n')
+                  when(
+                    complement(isNil),
+                    join('\n')
+                  )
                 ),
               )(editorColumn(columns)(objColumn.name))
             })
@@ -129,6 +144,7 @@ export default function TabOneScreen() {
           }}
         />
       </ScrollView>
+
       <View style={[styles.row]}>
         <FontAwesome.Button
           name="gamepad"
@@ -149,7 +165,7 @@ export default function TabOneScreen() {
           )})</Text>
           {
             getLoading &&
-            <ActivityIndicator animating={true} color={Colors.red800} />}
+            <ActivityIndicator animating={true} color="#c62828" />}
         </FontAwesome.Button>
         <FontAwesome.Button
           name="cloud-download"
@@ -161,7 +177,9 @@ export default function TabOneScreen() {
           )}>
           Download
         </FontAwesome.Button>
+        
       </View>
+      
     </View>
   );
 }
@@ -204,5 +222,14 @@ const styles = StyleSheet.create({
   button: {
     textAlignVertical: 'center',
     margin: 10
+  },
+  abs: {
+    position: 'absolute',
+    backgroundColor: 'rgba(255, 255, 255, 0)',
+    bottom: 20,
+    right: 20,
+    zIndex: 100,
+    flex: 1,
+    justifyContent: 'flex-end'
   }
 });

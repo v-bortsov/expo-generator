@@ -7,7 +7,6 @@ import useColorScheme from './src/hooks/useColorScheme';
 import Navigation from './src/navigation';
 import { Provider } from 'react-redux'
 import { store } from './src/store'
-import { Provider as PaperProvider } from 'react-native-paper';
 import { NativeBaseProvider, extendTheme, Text, ColorMode,  } from 'native-base';
 import type { StorageManager } from 'native-base';
 import AsyncStorage from '@react-native-async-storage/async-storage';

@@ -1,7 +1,7 @@
 import { lensProp, not, over, pipe, tap, __ } from 'ramda';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { AppDispatch, Day } from '../react-app-env';
+import { AppDispatch, Day } from '../../react-app-env';
 import { findAndMerge } from '../utils/popular';
 export const setDay = (
   day: Day, days: Day[], setDays: AppDispatch

@@ -7,18 +7,19 @@ import components from '../components'
 
 export const selectByType = cond<string, any[]>([[equals('custom'), always(customFields)], [equals('integer'), always(integerFields)], [equals('dates'), always(dateFields)], [equals('dictionary'), always(dictionaryFields)], [T, always([])]])
 
+export const timestampToMoment = when(
+  has('startDay'),
+  over(
+    lensPath(['startDay', 'value']),
+    (e: any)=>moment(e)
+      .format('DD.MM.YYYY')
+  ),
+)
 export const onFinish = curry((
   dispatch: any, state: any, slicer: any
 ) => pipe(
   indexBy<any>(prop('name')),
-  when(
-    has('startDay'),
-    over(
-      lensPath(['startDay', 'value']),
-      (e: any)=>moment(e)
-        .format('DD.MM.YYYY')
-    ),
-  ),
+  timestampToMoment,
   when(
     pathEq(
       ['type', 'value'],
@@ -144,13 +145,8 @@ export const extractValueOfComponent = curry((
       prop('component'),
       includes(
         __,
-        ['Input', 'InputNumber', 'Select', 'TextArea']
+        ['Input', 'InputNumber', 'Select', 'TextArea', 'WeekDays', 'Multislider']
       )
-    ), compose(always(event))
-  ], [
-    propEq(
-      'component',
-      'WeekDays'
     ), compose(always(event))
   ]
 ])(props))

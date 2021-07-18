@@ -1,12 +1,13 @@
-// import { InputItem, TextareaItem } from '@ant-design/react-native';
-// import DatePicker from '@dietime/react-native-date-picker';
 import { Select } from './CustomPicker';
 import { WeekDays } from './WeekDays';
-import InputSpinner from 'react-native-input-spinner';
+// import InputSpinner from 'react-native-input-spinner';
+import Slider from './Slider';
 import {Input} from './TextInput';
 import {TextArea} from './TextArea'
 import {DatePicker} from './DatePicker'
+import Multislider from './Multislider'
+
 
 export default {
-  Input, InputNumber: InputSpinner, Select, TextArea, WeekDays, DatePicker 
+  Input, InputNumber: Slider/* InputSpinner */, Select, TextArea, WeekDays, DatePicker , Multislider
 }

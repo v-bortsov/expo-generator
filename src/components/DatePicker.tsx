@@ -1,6 +1,6 @@
-import { isEmpty,  isNil } from 'ramda';
+import { is, isEmpty,  isNil } from 'ramda';
 import * as React from 'react';
-import { Button } from 'react-native-paper';
+import {Button} from 'react-native'
 import { DatePickerModal } from 'react-native-paper-dates';
 
 function formatDate(date: string) {
@@ -36,15 +36,21 @@ export function DatePicker(props: any) {
   );
   return (
     <>
-      <Button onPress={() => setOpen(true)} uppercase={false} mode="outlined">
-        {isNil(props.value) || isEmpty(props.value) ? 'Pick single date' : formatDate(props.value.toString())}
-      </Button>
+      <Button
+        onPress={() => setOpen(true)}
+        title={isNil(props.value) || isEmpty(props.value) ? 'Pick single date' : is(
+          String,
+          props.value
+        ) ? props.value : formatDate(props.value.toString())}
+      />
       <DatePickerModal
         // locale={'en'} optional, default: automatic
         mode="single"
         visible={open}
         onDismiss={onDismissSingle}
-        date={props.value}
+        date={new Date(props.value.split('.')
+          .reverse()
+          .join('-'))}
         onConfirm={onConfirmSingle}
         // validRange={{
         //   startDate: new Date(2021, 1, 2),  // optional
