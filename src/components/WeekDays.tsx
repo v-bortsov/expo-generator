@@ -54,7 +54,14 @@ export const WeekDays = ({ value, onChange }: WeekDays): JSX.Element => (
   </View>
 )
 const styles = StyleSheet.create({
-  container: { flex: 1, flexDirection: 'row', backgroundColor: 'rgb(255, 255, 255)', justifyContent: 'space-between', margin: 15, height: 100 },
+  container: { 
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: 'rgb(255, 255, 255)',
+    justifyContent: 'space-between',
+    margin: 15,
+    height: 100 
+  },
   day: {
     flex: 1,
     textAlign: 'center',

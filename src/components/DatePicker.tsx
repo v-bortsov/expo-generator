@@ -48,9 +48,10 @@ export function DatePicker(props: any) {
         mode="single"
         visible={open}
         onDismiss={onDismissSingle}
-        date={new Date(props.value.split('.')
-          .reverse()
-          .join('-'))}
+        // date={new Date(props.value.split('.')
+        //   .reverse()
+        //   .join('-'))}
+        date={props.value}
         onConfirm={onConfirmSingle}
         // validRange={{
         //   startDate: new Date(2021, 1, 2),  // optional

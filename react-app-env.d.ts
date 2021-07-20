@@ -29,6 +29,7 @@ type OptionNumber = Option & {
   ceil: boolean
 }
 type OptionString = {
+  'from-to': [number, number]
   length: number
 }
 

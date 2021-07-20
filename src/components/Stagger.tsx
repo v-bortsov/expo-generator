@@ -65,7 +65,7 @@ const actionByAdd = (dispatch: any)=> pipe(
       indexBy(prop('name'))
     )
   ),
-  timestampToMoment,
+  // timestampToMoment,
   over(
     lensPath(['name', 'value']),
     uuidv4

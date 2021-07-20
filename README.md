@@ -22,3 +22,6 @@ After starting it, wait for Sonar to load on http://localhost:9000 (it can take 
 ## IDE & Eslint & code formating
 
 ## Ramda & FP style
+...
+## How to contribute
+Have an idea? Found a bug? Please raise to ISSUES. Contributions are welcome and are greatly appreciated! Every little bit helps, and credit will always be given.

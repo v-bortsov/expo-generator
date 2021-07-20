@@ -19,7 +19,7 @@ export const onFinish = curry((
   dispatch: any, state: any, slicer: any
 ) => pipe(
   indexBy<any>(prop('name')),
-  timestampToMoment,
+  // timestampToMoment,
   when(
     pathEq(
       ['type', 'value'],
