@@ -18,3 +18,4 @@ export const requestByAreas = {
   currencies: [['data', 'currencies'], 'abbr', currencies, []],
   cities: [['data', 'countries', 0, 'cities'], 'name', getCitiesByCountry, [{countryId: 176, limit: 10}]],
 }
+export const staggerButtons = [{icon: 'playlist-plus', type: 'custom', backgroundColor: '#b72424'}, {icon: 'calendar-today', type: 'dates', backgroundColor: '#8524b7'}, {icon: 'format-list-numbered', type: 'integer', backgroundColor: '#24b773'}, {icon: 'database', type: 'dicrionary', backgroundColor: '#ea8c2b'}]

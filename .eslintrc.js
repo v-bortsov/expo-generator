@@ -27,6 +27,7 @@ module.exports = {
   rules: {
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-var-requires': 'off',
+    "prefer-const": 'off',
     'react/display-name': "off",
     '@typescript-eslint/no-unused-vars-experimental': ["warn", { ignoreArgsIfArgsAfterAreUsed: false }],
     'arrow-body-style': ["error", "as-needed"],

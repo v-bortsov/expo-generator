@@ -17,9 +17,3 @@ export const Input: React.FC<any> = (props: any)=>   <TextInput
     placeholderTextColor: 'blueGray.50',
   }}
 />
-{/* <TextInput
-  onChangeText={props.onChange}
-  {...omit(
-    ['onChange'],
-    props
-  )} /> */}

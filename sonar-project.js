@@ -10,7 +10,7 @@ sonarqubeScanner(
       'sonar.sources': 'src',
       // 'sonar.projectName': 'expo-bare',
       'sonar.login':  'admin',
-      // 'sonar.password':  'frikandel',
+      'sonar.password':  'frikandel',
       // 'sonar.sources':  'src',
       // 'sonar.tests':  'src',
       // 'sonar.inclusions'  :  '**', // Entry point of your code

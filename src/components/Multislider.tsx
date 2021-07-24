@@ -63,4 +63,4 @@ const styles = 	StyleSheet.create({
     minWidth: 150,
   }
 })
-export default Multislider
+export { Multislider }

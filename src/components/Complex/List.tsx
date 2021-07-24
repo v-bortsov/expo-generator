@@ -1,15 +1,16 @@
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
-import { Box, HStack, Icon, Avatar  } from 'native-base';
-import { applySpec, map, mergeRight, pipe, prepend, tap } from 'ramda';
+import { Ionicons } from '@expo/vector-icons';
+import { Avatar, Box, HStack } from 'native-base';
+import { applySpec, map, mergeRight, pipe } from 'ramda';
 import React, { useRef } from 'react';
-import { View, Text, StyleSheet, Animated, Pressable, TouchableHighlight, TouchableOpacity } from 'react-native';
+import { Animated, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 // import { Avatar as Ava, DataTable } from 'react-native-paper';
 import { SwipeListView } from 'react-native-swipe-list-view';
+import { removeColumn } from '../features/generator/generatorSlice';
 
 const ANIMATION_DURATION = 250;
 const ROW_HEIGHT = 70;
 
-const FadeInView = (props: any) => {
+const SlideUpView = (props: any) => {
   const fadeAnim = useRef(new Animated.Value(0)).current  // Initial value for opacity: 0
 
   React.useEffect(
@@ -87,7 +88,7 @@ export const CollectListItem: React.FC<any> = ({label, type, length, name, item,
   // </List.Item>
 )
 
-export const CollectList: React.FC<any> = ({collect, removeColumn, editColumn, transformItem}: any)=>{
+export default ({collect, removeColumn, editColumn, transformItem}: React.FC<any>)=>{
 
 
   const closeRow = (
@@ -110,7 +111,7 @@ export const CollectList: React.FC<any> = ({collect, removeColumn, editColumn, t
     )))(collect)}
     renderItem={(
       data, rowMap
-    ) => (<FadeInView>
+    ) => (
       <Box style={styles.rowFront}>
         <Pressable
           onPress={()=>editColumn({name: data.item.name, edit: true})}
@@ -138,7 +139,7 @@ export const CollectList: React.FC<any> = ({collect, removeColumn, editColumn, t
           </HStack>
         </Pressable>
       </Box>
-    </FadeInView>)}
+    )}
     renderHiddenItem={ (
       data, rowMap
     ) => (
@@ -187,7 +188,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#CCC',
     borderBottomColor: 'black',
     borderBottomWidth: 1,
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     height: ROW_HEIGHT,
   },
   rowBack: {
@@ -197,6 +198,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingLeft: 15,
+    height: ROW_HEIGHT,
   },
   backRightBtn: {
     alignItems: 'center',

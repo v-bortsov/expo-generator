@@ -1,8 +1,8 @@
 import React from 'react'
-import {Box, Slider} from 'native-base'
-const Slide = (props: any) => (
+import {Box, Slider as Slide} from 'native-base'
+const Slider = (props: any) => (
   <Box mx={5} width="80%">
-    <Slider
+    <Slide
       {...props}
       defaultValue={70}
       minValue={0}
@@ -10,12 +10,12 @@ const Slide = (props: any) => (
       accessibilityLabel="hello world"
       step={10}
     >
-      <Slider.Track>
-        <Slider.FilledTrack />
-      </Slider.Track>
-      <Slider.Thumb />
-    </Slider>
+      <Slide.Track>
+        <Slide.FilledTrack />
+      </Slide.Track>
+      <Slide.Thumb />
+    </Slide>
   </Box>
 )
 
-export default Slide
+export {Slider}

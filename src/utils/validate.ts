@@ -67,7 +67,7 @@ const validate = curry((
 
 export const isCheck = ({rules, value, name}: any): string[]=> reduce<any, any>(
   (
-    _: any, item: any[]
+    _, item: any[]
   )=>pipe(
     modifyArgs(value),
     converge(

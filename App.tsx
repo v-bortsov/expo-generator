@@ -1,15 +1,15 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
+import type { StorageManager } from 'native-base';
+import { ColorMode, extendTheme, NativeBaseProvider } from 'native-base';
 import React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-
+import { Provider } from 'react-redux';
 import useCachedResources from './src/hooks/useCachedResources';
 import useColorScheme from './src/hooks/useColorScheme';
 import Navigation from './src/navigation';
-import { Provider } from 'react-redux'
-import { store } from './src/store'
-import { NativeBaseProvider, extendTheme, Text, ColorMode,  } from 'native-base';
-import type { StorageManager } from 'native-base';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { store } from './src/store';
+
 
 const config = {
   useSystemColorMode: false,

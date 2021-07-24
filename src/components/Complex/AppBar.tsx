@@ -1,9 +1,9 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { Box, HStack, Icon, IconButton, StatusBar, Text } from 'native-base';
 import * as React from 'react';
-import { unionFields } from '../constants/Fields';
+import { unionFields } from '../../constants/Fields';
 
-export default function AppBar({setAdd, fieldsDispatch}: any){
+export default function AppBar({setAdd, fieldsDispatch}: any): JSX.Element{
   return (
     <>
       <StatusBar backgroundColor="#3700B3" barStyle="light-content" />

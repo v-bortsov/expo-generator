@@ -11,30 +11,20 @@ const styles = StyleSheet.create({
   },
 });
 
-export const TextArea = (props: any): JSX.Element =>
-//  <TextInput
-//   onChangeText={props.onChange}
-//   {...omit(
-//     ['onChange'],
-//     props
-//   )}
-//   style={styles.input}
-//   multiline
-//   numberOfLines={4} />
-  <Stack space={4}>
-    <Text
-      onChangeText={props.onChange}
-      {...omit(
-        ['onChange'],
-        props
-      )}
-      h={20}
-      placeholder="Text Area Placeholder"
-      variant="filled"
-      _light={{
-        placeholderTextColor: 'blueGray.400',
-      }}
-      _dark={{
-        placeholderTextColor: 'blueGray.50',
-      }} />
-  </Stack>
+export const TextArea = (props: any): JSX.Element => <Stack space={4}>
+  <Text
+    onChangeText={props.onChange}
+    {...omit(
+      ['onChange'],
+      props
+    )}
+    h={20}
+    placeholder="Text Area Placeholder"
+    variant="filled"
+    _light={{
+      placeholderTextColor: 'blueGray.400',
+    }}
+    _dark={{
+      placeholderTextColor: 'blueGray.50',
+    }} />
+</Stack>

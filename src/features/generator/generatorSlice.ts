@@ -1,12 +1,12 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { anyPass, append, clone, cond, converge, evolve, ifElse, map, mergeRight, mergeWith, objOf, pathEq, pipe, pluck, prop, propEq, reject, split, tap, values, __ } from 'ramda'
+import { anyPass, append, assocPath, clone, cond, converge, evolve, ifElse, map, mergeRight, mergeWith, objOf, pathEq, pipe, pluck, prop, propEq, reject, split, tap, values, __ } from 'ramda'
 import { ColumnType, GeneratorState, Nullable, TypeLimiting } from '../../../react-app-env'
 import { exampleFields } from '../../constants/Examples'
 import { RootState } from '../../store'
+// import { dayOfWeekToDate, random, cartesianCondition, findAndMerge  } from '../../utils'
 import { dayOfWeekToDate } from '../../utils/dates'
 import { random } from '../../utils/numbers'
 import { addParam, cartesianCondition, findAndMerge } from '../../utils/popular'
-
 export const initialState: GeneratorState = {
   columns: exampleFields,
   editColumn: null,
@@ -82,6 +82,8 @@ export const generatorSlice = createSlice({
         )
       )(action.payload)
     },
+
+
     changeColumn: (
       state: any, action: PayloadAction<ColumnType<null>>
     ) => {
@@ -89,6 +91,16 @@ export const generatorSlice = createSlice({
         state.columns,
         action.payload,
         'name'
+      )
+    },
+    changeColumnByName: (
+      state: any, action: PayloadAction<any>
+    ) => {
+      
+      state.columns = assocPath(
+        action.payload.pointer,
+        action.payload.value,
+        state.columns
       )
     },
     removeColumn: (
@@ -121,7 +133,7 @@ export const generatorSlice = createSlice({
   }
 })
 
-export const { createColumn, removeColumn, changeColumn, run, setLimit, loading, editColumn } = generatorSlice.actions
+
 // First, create the thunk
 export const thunkCartesianCalc = createAsyncThunk(
   'rows/cartesian',
@@ -150,14 +162,15 @@ export const thunkCartesianCalc = createAsyncThunk(
 //     dispatch(incrementByAmount(amount))
 //   }, 1000)
 // }
-
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.countevalue)`
-export const selectColumns = (state: RootState) => state.generator.columns
-export const selectRows = (state: RootState) => state.generator.rows
-export const selectLimiting = (state: RootState) => state.generator.limiting
-export const selectLoading = (state: RootState): boolean | undefined => state.generator.loading
-export const selectEditColumn = (state: RootState): Nullable<string> => state.generator.editColumn
+// export const selectColumns = (state: RootState) => state.generator.columns
+// export const selectRows = (state: RootState) => state.generator.rows
+// export const selectLimiting = (state: RootState) => state.generator.limiting
+// export const selectLoading = (state: RootState): boolean | undefined => state.generator.loading
+// export const selectEditColumn = (state: RootState): Nullable<string> => state.generator.editColumn
 
+// export const selectGenerator = (state: RootState) => state.generator
+export const { createColumn, removeColumn, changeColumn, run, setLimit, loading, editColumn } = generatorSlice.actions
 export default generatorSlice.reducer
