@@ -2,7 +2,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Accordion, Box, IconButton } from 'native-base';
 import { addIndex, always, clone, cond, converge, indexBy, keys, map, objOf, path, pathEq, pick, pipe, prop, T, values } from 'ramda';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Easing, FlatList, Pressable, Text, View } from 'react-native';
+import { Animated, Easing, FlatList, Pressable, Text, View, StyleSheet } from 'react-native';
 import { height } from 'styled-system';
 import { Field } from '../../../react-app-env';
 import { staggerButtons } from '../../constants/Fields';
@@ -57,8 +57,8 @@ export function Summary({circle, name, label, editColumn, dispatch, item, idx}: 
   );
   return (
     <View>
-      <Pressable  onPress={()=> setOpen(!open)} style={{flex: 1,  flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#a5f3fc'}}>
-        <View style={{justifyContent: 'space-between', flexDirection: 'column', alignItems: 'center', alignContent: 'space-between'}}>
+      <Pressable  onPress={()=> setOpen(!open)} style={styles.summary}>
+        <View style={styles.leftSummary}>
           <IconButton
             mb={4}
             backgroundColor={circle.backgroundColor}
@@ -68,11 +68,11 @@ export function Summary({circle, name, label, editColumn, dispatch, item, idx}: 
             // onPress={()=>actionByAdd(dispatch)(i.action)}
           />
         </View>
-        <View style={{flex: 1, flexGrow: 4, flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex=start', alignContent: 'space-between'}}>
+        <View style={styles.titleSummary}>
           <View><Text>{label}</Text></View>
           <View><Text>{label}</Text></View>
         </View>
-        <View style={{flex: 1, justifyContent: 'space-between', flexDirection: 'column', alignItems: 'center', alignContent: 'space-between'}}>
+        <View style={styles.keyIconSummary}>
           <IconButton
             mb={4}
             backgroundColor={name===editColumn ? '#e8e32e' : ''}
@@ -82,7 +82,7 @@ export function Summary({circle, name, label, editColumn, dispatch, item, idx}: 
             icon={<MaterialCommunityIcons size={36} name="key-variant" />}
           />
         </View>
-        <View style={{flexGrow: 1, alignItems: 'flex-end'}}>
+        <View style={styles.turnoverArrowSummary}>
           <Animated.View
             style={{
               transform: [
@@ -204,3 +204,11 @@ export default function AccordionComponent({items, dispatch, editColumn}: any) {
     </Box>
   );
 }
+
+const styles = StyleSheet.create({
+  summary: {flex: 1,  flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#a5f3fc'},
+  leftSummary: {justifyContent: 'space-between', flexDirection: 'column', alignItems: 'center', alignContent: 'space-between'},
+  titleSummary: {flex: 1, flexGrow: 4, flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start', alignContent: 'space-between'},
+  keyIconSummary: {flex: 1, justifyContent: 'space-between', flexDirection: 'column', alignItems: 'center', alignContent: 'space-between'},
+  turnoverSummary: {flexGrow: 1, alignItems: 'flex-end'}
+})
