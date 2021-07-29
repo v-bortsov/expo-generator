@@ -3,7 +3,8 @@ import { always, apply, assoc, clone, complement, converge, curry, filter, isEmp
 import React, { useReducer, useState } from 'react';
 import { ActivityIndicator, Alert, Button, Modal, ScrollView, StatusBar, StyleSheet, Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppBar, CollectList, Fields, RadioGroup, Stagger, Accordion } from '../components/Complex';
+import { AppBar, CollectList, Fields, RadioGroup, Stagger} from '../components/Complex';
+import {SlideAccordion } from '../components/Complex/Accordion'
 import { View } from '../components/Themed';
 import { changeColumn, createColumn, editColumn, loading, removeColumn, run, thunkCartesianCalc } from '../features/generator/generatorSlice';
 import { RootState } from '../store';
@@ -63,8 +64,9 @@ export default function TabOneScreen(obj) {
       ))
     ]
   )([])
+  const {rows, columns, editColumn: edit, loading: getLoading, editColumn, limiting} = useSelector((state: RootState) => state.generator)
   const dispatch = useDispatch()
-  const {rows, columns, editColumn: edit, loading: getLoading, limiting} = useSelector((state: RootState) => state.generator)
+
   console.log(state);
   
   return (
@@ -76,8 +78,8 @@ export default function TabOneScreen(obj) {
         showsVerticalScrollIndicator={false}
       >
         <AppBar {...{setAdd, fieldsDispatch}}/>
-        <RadioGroup/>
-        <Modal
+        
+        {/* <Modal
           animationType="slide"
           transparent={false}
           visible={!isNil(edit)||isAdd||false}
@@ -115,7 +117,8 @@ export default function TabOneScreen(obj) {
             />
           </View>
         </Modal>
-        <Accordion items={columns} dispatch={dispatch}/>
+        <Accordion items={columns} dispatch={dispatch} editColumn={limiting}/> */}
+        <SlideAccordion  items={columns} dispatch={dispatch} editColumn={limiting}/>
         {/* <CollectList
           style={{flex: 1}}
           collect={columns}
@@ -138,7 +141,9 @@ export default function TabOneScreen(obj) {
             length: path(['collect', 'value', 'length'])
           }}
         /> */}
+        
       </ScrollView>
+      <RadioGroup/>
       <View style={[styles.row]}>
         <FontAwesome.Button
           name="gamepad"
@@ -161,6 +166,7 @@ export default function TabOneScreen(obj) {
             getLoading &&
             <ActivityIndicator animating={true} color="#c62828" />}
         </FontAwesome.Button>
+        
         <FontAwesome.Button
           name="cloud-download"
           backgroundColor={isEmpty(rows) ? 'grey' : '#3b5998'}

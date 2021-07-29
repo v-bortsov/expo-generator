@@ -19,6 +19,7 @@ export const TextArea = (props: any): JSX.Element => <Stack space={4}>
       props
     )}
     h={20}
+    aria-label="t1"
     placeholder="Text Area Placeholder"
     variant="filled"
     _light={{

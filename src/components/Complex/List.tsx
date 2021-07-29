@@ -10,7 +10,7 @@ import { removeColumn } from '../features/generator/generatorSlice';
 const ANIMATION_DURATION = 250;
 const ROW_HEIGHT = 70;
 
-const SlideUpView = (props: any) => {
+export const SlideUpView = (props: any) => {
   const fadeAnim = useRef(new Animated.Value(0)).current  // Initial value for opacity: 0
 
   React.useEffect(
@@ -29,22 +29,20 @@ const SlideUpView = (props: any) => {
   )
   const rowStyles = [
     {
-      height: ROW_HEIGHT,
-    }, {
       height: fadeAnim.interpolate({
         inputRange: [0, 1],
         outputRange: [0, ROW_HEIGHT],
         extrapolate: 'clamp',
       }),
-    }, { opacity: fadeAnim }, {
+    }, /* { opacity: fadeAnim }, */ {
       transform: [
-        { scale: fadeAnim }, {
+        { scale: fadeAnim }, /* {
           rotate: fadeAnim.interpolate({
             inputRange: [0, 1],
             outputRange: ['35deg', '0deg'],
             extrapolate: 'clamp',
           })
-        }
+        } */
       ],
     },
   ];

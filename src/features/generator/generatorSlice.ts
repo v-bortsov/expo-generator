@@ -6,7 +6,7 @@ import { RootState } from '../../store'
 // import { dayOfWeekToDate, random, cartesianCondition, findAndMerge  } from '../../utils'
 import { dayOfWeekToDate } from '../../utils/dates'
 import { random } from '../../utils/numbers'
-import { addParam, cartesianCondition, findAndMerge } from '../../utils/popular'
+import { cartesianCondition, findAndMerge } from '../../utils/popular'
 export const initialState: GeneratorState = {
   columns: exampleFields,
   editColumn: null,
@@ -14,20 +14,6 @@ export const initialState: GeneratorState = {
   limiting: null,
   loading: false
 }
-// const customType = addParam(
-//   'collect',
-//   pipe(
-//     prop<any, any>('collect'),
-//     split('\n')
-//   ),
-//   [clone]
-// )
-const customType = evolve({
-  collect: {value: pipe(
-    prop<any, any>('collect'),
-    split('\n')
-  )}
-}) 
 const bindTypeToHandler = cond([
   [
     propEq(
@@ -46,12 +32,12 @@ export const generatorSlice = createSlice({
   initialState,
   reducers: {
     editColumn: (
-      state, action: PayloadAction<any>
+      state: GeneratorState, action: PayloadAction<any>
     ) => {
       state.editColumn = action.payload.name
     },
     createColumn: (
-      state, action: PayloadAction<ColumnType<null>>
+      state: GeneratorState, action: PayloadAction<ColumnType<null>>
     ) => {
       state.columns = pipe(
         ifElse(
@@ -82,10 +68,8 @@ export const generatorSlice = createSlice({
         )
       )(action.payload)
     },
-
-
     changeColumn: (
-      state: any, action: PayloadAction<ColumnType<null>>
+      state: GeneratorState, action: PayloadAction<ColumnType<null>>
     ) => {
       state.columns = findAndMerge(
         state.columns,
@@ -94,17 +78,16 @@ export const generatorSlice = createSlice({
       )
     },
     changeColumnByName: (
-      state: any, action: PayloadAction<any>
+      state: GeneratorState, action: PayloadAction<any>
     ) => {
-      
       state.columns = assocPath(
-        action.payload.pointer,
+        action.payload.path,
         action.payload.value,
         state.columns
       )
     },
     removeColumn: (
-      state, action: PayloadAction<ColumnType<null>>
+      state: GeneratorState, action: PayloadAction<ColumnType<null>>
     ) => {
       state.columns = reject(
         propEq(
@@ -115,35 +98,31 @@ export const generatorSlice = createSlice({
       )
     },
     setLimit: (
-      state, action: PayloadAction<TypeLimiting>
+      state: GeneratorState, action: PayloadAction<TypeLimiting>
     ) => {
-      state.limiting = action.payload
+      state.limiting = state.limiting===action.payload ? null : action.payload
     },
     loading: (
-      state, action: PayloadAction<boolean|undefined>
+      state: GeneratorState, action: PayloadAction<boolean|undefined>
     ) =>{
       state.loading = action.payload
     },
     run: (
-      state, action: PayloadAction<any[]>
+      state: GeneratorState, action: PayloadAction<any[]>
     ) => {
       state.rows = action.payload
       state.loading = false
     },
   }
 })
-
-
 // First, create the thunk
 export const thunkCartesianCalc = createAsyncThunk(
   'rows/cartesian',
   async (
     _, store
   ): Promise<any[]>  => {
-    
     store.dispatch(loading(true))
     const {columns, limiting} = store.getState().generator
-
     return  Promise.resolve(cartesianCondition(
       map(
         pluck('value'),
@@ -162,15 +141,5 @@ export const thunkCartesianCalc = createAsyncThunk(
 //     dispatch(incrementByAmount(amount))
 //   }, 1000)
 // }
-// The function below is called a selector and allows us to select a value from
-// the state. Selectors can also be defined inline where they're used instead of
-// in the slice file. For example: `useSelector((state: RootState) => state.countevalue)`
-// export const selectColumns = (state: RootState) => state.generator.columns
-// export const selectRows = (state: RootState) => state.generator.rows
-// export const selectLimiting = (state: RootState) => state.generator.limiting
-// export const selectLoading = (state: RootState): boolean | undefined => state.generator.loading
-// export const selectEditColumn = (state: RootState): Nullable<string> => state.generator.editColumn
-
-// export const selectGenerator = (state: RootState) => state.generator
-export const { createColumn, removeColumn, changeColumn, run, setLimit, loading, editColumn } = generatorSlice.actions
+export const { createColumn, removeColumn, changeColumnByName, changeColumn, run, setLimit, loading, editColumn } = generatorSlice.actions
 export default generatorSlice.reducer

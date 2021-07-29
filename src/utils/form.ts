@@ -1,10 +1,10 @@
 import moment from 'moment';
-import { always, andThen, append, assoc, both, call, chain, clone, compose, cond, converge, curry, equals, has, includes, indexBy, join, lensPath, map, mergeRight, objOf, over, path, pathEq, pick, pipe, pluck, prop, propEq, slice, split, T, tap, when, __ } from 'ramda';
+import { always, andThen, append, assoc, both, call, chain, clone, compose, cond, converge, curry, equals, has, includes, indexBy, join, lensPath, map, mergeRight, objOf, of, over, path, pathEq, pick, pipe, pluck, prepend, prop, propEq, slice, split, T, tap, when, __ } from 'ramda';
 import { customFields, dateFields, dictionaryFields, integerFields, requestByAreas } from '../constants/Fields';
 import { AppDispatch, Field } from '../../react-app-env';
 import { countries, currencies, getCitiesByCountry, languages } from './network';
-import components from '../components'
-
+import components from '../components/Primitives'
+import {changeColumnByName} from '../features/generator/generatorSlice'
 export const selectByType = cond<string, any[]>([[equals('custom'), always(customFields)], [equals('integer'), always(integerFields)], [equals('dates'), always(dateFields)], [equals('dictionary'), always(dictionaryFields)], [T, always([])]])
 
 export const timestampToMoment = when(
@@ -27,7 +27,7 @@ export const onFinish = curry((
     ),
     over(
       lensPath(['collect', 'value']),
-      split<any>('\n')
+      split('\n')
     ),
   ),
   tap(x => console.log(
@@ -107,16 +107,15 @@ const loadDictionaryData = curry((
 export const extractValueOfComponent = curry((
   props, dispatch, event
 ) => cond<any, any>([
-  // [
-  //   includes(
-  //     __,
-  //     ['TextArea']
-  //   ), pipe(
-  //     always(event),
-  //     path(['target', 'value'])
-  //   )
-  // ],
   [
+    propEq(
+      'component',
+      'TextArea'
+    ), pipe(
+      always(event),
+      split('\n')
+    )
+  ], [
     both(
       propEq(
         'component',
@@ -158,15 +157,23 @@ export const getReactComponentFromCollect = pipe<Field, any, JSX.Element>(
     components
   )
 )
-export const addValueAndOnChange: any = (dispatch: AppDispatch)=>chain(
+export const addValueAndOnChange: any = (
+  dispatch: AppDispatch, idx: number
+)=>chain(
   assoc('onChange'),
   curry((
-    props: any, e: any
-  )=>pipe<Field, any, any>(
+    props: Field, e: any
+  )=>pipe(
     converge(
       mergeRight,
       [
-        pick(['name']), always(pipe<any, any, any>(
+        pipe(
+          prop('name'),
+          of,
+          prepend(idx),
+          append('value'),
+          objOf('path'),
+        ), always(pipe<any, any, any>(
           // !! multipleStoreChanges
           extractValueOfComponent(
             props,
@@ -176,6 +183,7 @@ export const addValueAndOnChange: any = (dispatch: AppDispatch)=>chain(
         )(e))
       ]
     ),
+    changeColumnByName,
     dispatch
   )(props))
 )

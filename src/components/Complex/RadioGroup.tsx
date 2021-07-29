@@ -4,9 +4,9 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {  setLimit } from '../../features/generator/generatorSlice'
 import { ColumnType } from '../../../react-app-env'
-import { Radio, Center, NativeBaseProvider } from 'native-base'
+import { Radio, Center, NativeBaseProvider, useContrastText } from 'native-base'
 import { View, Text } from 'react-native'
-import {Select} from '../../components/CustomPicker'
+import {Select} from '../Primitives/CustomPicker'
 import Slider from '@react-native-community/slider';
 import { RootState } from '../../store'
 
@@ -18,10 +18,11 @@ export default function RadioGroup (): JSX.Element {
   const [group, setGroup] = useState(spotGroupType(limit))
 
   return (
-    <View style={{flex: 1, flexDirection: 'row'}}>
+    <View style={{flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
       <Radio.Group
         name="myRadioGroup"
         value={group}
+        label="myRadioGroup"
         onChange={(value: any): void => {
           if (value === 'all') {
             dispatch(setLimit(null)) 
@@ -29,11 +30,11 @@ export default function RadioGroup (): JSX.Element {
         }}
       >
         {map(
-          (v: any): JSX.Element=> <Radio value={v.value} my={1}>{v.label}</Radio>,
+          (v: any): JSX.Element=> <Radio _text={{ color: useContrastText('emerald.700') }} key={v.value} value={v.value} my={1}>{v.label}</Radio>,
           options
         )}
       </Radio.Group>
-      <View>
+      <View style={{width: 200}}>
         {equals(
           'limit',
           group

@@ -1,8 +1,8 @@
-import { lensProp, not, over, pipe, tap, __ } from 'ramda';
+import { lensProp, not, over, pipe, __ } from 'ramda';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { AppDispatch, Day } from '../../react-app-env';
-import { findAndMerge } from '../utils';
+import { AppDispatch, Day, WeekDay } from '../../../react-app-env';
+import { findAndMerge } from '../../utils';
 export const setDay = (
   day: Day, days: Day[], setDays: AppDispatch
 ): any => pipe(
@@ -18,10 +18,7 @@ export const setDay = (
   setDays
 )(day)
 
-type WeekDays = {
-  value: Day[],
-  onChange: any
-}
+
 const Circle = (props: any) => {
   const size = props.size || 40;
   const style = {
@@ -35,7 +32,7 @@ const Circle = (props: any) => {
   };
   return <View style={style}>{props.children}</View>;
 };
-export const WeekDays = ({ value, onChange }: WeekDays): JSX.Element => (
+export const WeekDays = ({ value, onChange }: WeekDay): JSX.Element => (
   <View style={styles.container}>
     { 
       value.map((
@@ -57,7 +54,6 @@ const styles = StyleSheet.create({
   container: { 
     flex: 1,
     flexDirection: 'row',
-    backgroundColor: 'rgb(255, 255, 255)',
     justifyContent: 'space-between',
     margin: 15,
     height: 100 

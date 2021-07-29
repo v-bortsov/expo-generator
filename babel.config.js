@@ -6,7 +6,7 @@ plugins: ["@babel/plugin-proposal-class-properties"],
 env: {
   production: {
     plugins: ['react-native-paper/babel'],
-  },
+  },    
 },
 // overrides: [
 //   {

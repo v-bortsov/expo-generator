@@ -1,4 +1,9 @@
 /// <reference types="react-scripts" />
+type AppDispatch = ThunkDispatch<RootState, any, AnyAction>; 
+type TypeLimiting = (null | number | ColumnType.name)
+type Nullable<T> = T | null;
+type Tuple<T, N extends number> = N extends N ? number extends N ? T[] : _TupleOf<T, N, []> : never;
+type _TupleOf<T, N extends number, R extends unknown[]> = R['length'] extends N ? R : _TupleOf<T, N, [T, ...R]>;
 interface GeneratorState {
   columns: ColumnType[]
   rows: any[]
@@ -43,9 +48,7 @@ declare function nestedFunc(arr: number): string[];
 //  function lenFunc(s: string): number;
 function lenFunc(num: number): nestedFunc;
 
-type AppDispatch = ThunkDispatch<RootState, any, AnyAction>; 
-type TypeLimiting = (null | number | ColumnType.name)
-type Nullable<T> = T | null;
+
 export enum DaysOfWeek {
   Sun = 0,
   Mon = 1,
@@ -54,6 +57,15 @@ export enum DaysOfWeek {
   Thu = 4,
   Fri = 5,
   Sat = 6
+}
+type Day = {
+  label: string
+  abbr: string
+  active: boolean
+}
+type WeekDay = {
+  value: Tuple<Day, 7>,
+  onChange: any
 }
 export enum Interval {
   days = 'days',
@@ -85,8 +97,5 @@ type FormField = {
   fields: Field[]
 }
 
-type Day = {
-  label: string
-  abbr: string
-  active: boolean
-}
+
+
