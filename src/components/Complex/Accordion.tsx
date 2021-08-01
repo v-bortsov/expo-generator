@@ -3,7 +3,6 @@ import { Accordion, Box, IconButton } from 'native-base';
 import { addIndex, always, clone, cond, converge, indexBy, keys, map, objOf, path, pathEq, pick, pipe, prop, T, values } from 'ramda';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, FlatList, Pressable, Text, View, StyleSheet } from 'react-native';
-import { height } from 'styled-system';
 import { Field } from '../../../react-app-env';
 import { staggerButtons } from '../../constants/Fields';
 import { setLimit } from '../../features/generator/generatorSlice';
@@ -56,7 +55,7 @@ export function Summary({circle, name, label, editColumn, dispatch, item, idx}: 
     [open]
   );
   return (
-    <View>
+    <View style={{ borderBottomColor: '#40403f', borderBottomWidth: StyleSheet.hairlineWidth }}>
       <Pressable  onPress={()=> setOpen(!open)} style={styles.summary}>
         <View style={styles.leftSummary}>
           <IconButton
@@ -82,11 +81,11 @@ export function Summary({circle, name, label, editColumn, dispatch, item, idx}: 
             icon={<MaterialCommunityIcons size={36} name="key-variant" />}
           />
         </View>
-        <View style={styles.turnoverArrowSummary}>
+        <View style={styles.turnoverSummary}>
           <Animated.View
             style={{
               transform: [
-                { 
+                {
                   rotate: animationHeight.interpolate({
                     inputRange: [0, 1],
                     outputRange: ['0deg', '180deg'],
@@ -100,9 +99,9 @@ export function Summary({circle, name, label, editColumn, dispatch, item, idx}: 
         </View>
       </Pressable>
       <Animated.View
-        style={{height: animationHeight.interpolate({
+        style={{maxHeight: animationHeight.interpolate({
           inputRange: [0, 1],
-          outputRange: [0, 200],
+          outputRange: [0, 300],
           extrapolate: 'clamp',
         }), overflow: 'hidden', backgroundColor: '#0891b2'}}>
         <Fields {...{state: pickFieldsByType(item), dispatch, idx}}/>
@@ -146,9 +145,10 @@ const pickFieldsByType = pipe(
   objOf('fields'),
 )
 
-export const SlideAccordion = ({items, dispatch, editColumn}: any)=> <FlatList
+export const SlideAccordion = ({items, dispatch, editColumn, style}: any)=> <FlatList
   keyExtractor={(item) => item}
   data={items}
+  style={style}
   renderItem={({ item, index: idx }) => (
     // <SlideUpView>
     <Summary
@@ -206,7 +206,7 @@ export default function AccordionComponent({items, dispatch, editColumn}: any) {
 }
 
 const styles = StyleSheet.create({
-  summary: {flex: 1,  flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#a5f3fc'},
+  summary: {flex: 1, overflow: 'hidden',  flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#a5f3fc'},
   leftSummary: {justifyContent: 'space-between', flexDirection: 'column', alignItems: 'center', alignContent: 'space-between'},
   titleSummary: {flex: 1, flexGrow: 4, flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start', alignContent: 'space-between'},
   keyIconSummary: {flex: 1, justifyContent: 'space-between', flexDirection: 'column', alignItems: 'center', alignContent: 'space-between'},

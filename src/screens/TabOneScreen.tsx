@@ -3,6 +3,7 @@ import { always, apply, assoc, clone, complement, converge, curry, filter, isEmp
 import React, { useReducer, useState } from 'react';
 import { ActivityIndicator, Alert, Button, Modal, ScrollView, StatusBar, StyleSheet, Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+import { flexShrink, style } from 'styled-system';
 import { AppBar, CollectList, Fields, RadioGroup, Stagger} from '../components/Complex';
 import {SlideAccordion } from '../components/Complex/Accordion'
 import { View } from '../components/Themed';
@@ -48,11 +49,11 @@ const splitCollectAndDispatch = (
   ),
   localDispatch
 )
-export default function TabOneScreen(obj) {
-  console.log(
-    'obj example:',
-    obj
-  );
+export default function TabOneScreen({navigation}) {
+  // console.log(
+  //   'obj example:',
+  //   obj
+  // );
   const [isAdd, setAdd] = useState(false)
   const [state, fieldsDispatch]  = converge(
     curry(useReducer),
@@ -71,13 +72,12 @@ export default function TabOneScreen(obj) {
   
   return (
     <View style={{flex: 1}}>
-      <Stagger {...{setAdd, fieldsDispatch}} />
-      <ScrollView
-        automaticallyAdjustContentInsets={false}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
-      >
-        <AppBar {...{setAdd, fieldsDispatch}}/>
+      <View>
+        <AppBar {...{setAdd, fieldsDispatch, navigation}}/>
+      </View>
+      <ScrollView>
+        {/* <View style={styles.content}> */}
+        
         
         {/* <Modal
           animationType="slide"
@@ -118,7 +118,8 @@ export default function TabOneScreen(obj) {
           </View>
         </Modal>
         <Accordion items={columns} dispatch={dispatch} editColumn={limiting}/> */}
-        <SlideAccordion  items={columns} dispatch={dispatch} editColumn={limiting}/>
+      
+        <SlideAccordion items={columns} dispatch={dispatch} editColumn={limiting}/>
         {/* <CollectList
           style={{flex: 1}}
           collect={columns}
@@ -143,40 +144,44 @@ export default function TabOneScreen(obj) {
         /> */}
         
       </ScrollView>
-      <RadioGroup/>
-      <View style={[styles.row]}>
-        <FontAwesome.Button
-          name="gamepad"
-          backgroundColor="#06bcee"
-          disabled={columns.length<=1||getLoading}
-          onPress={
-            () => {
-              dispatch(loading(true))
-              dispatch(thunkCartesianCalc())
-                .then((row: any)=>{
-                  dispatch(run(row.payload))
-                });
-            }
-          }>
-          <Text>Run ({columns.length<=1 ? 0 : calcCount(
-            columns,
-            limiting
-          )})</Text>
-          {
-            getLoading &&
+      {/* <RadioGroup/> */}
+       
+      <View>
+        <View style={[styles.row]}>
+          <Stagger {...{setAdd, fieldsDispatch}} />
+          <FontAwesome.Button
+            name="gamepad"
+            backgroundColor="#06bcee"
+            disabled={columns.length<=1||getLoading}
+            onPress={
+              () => {
+                dispatch(loading(true))
+                dispatch(thunkCartesianCalc())
+                  .then((row: any)=>{
+                    dispatch(run(row.payload))
+                  });
+              }
+            }>
+            <Text>Run ({columns.length<=1 ? 0 : calcCount(
+              columns,
+              limiting
+            )})</Text>
+            {
+              getLoading &&
             <ActivityIndicator animating={true} color="#c62828" />}
-        </FontAwesome.Button>
+          </FontAwesome.Button>
         
-        <FontAwesome.Button
-          name="cloud-download"
-          backgroundColor={isEmpty(rows) ? 'grey' : '#3b5998'}
-          disabled={isEmpty(rows)}
-          onPress={()=> downloadObjectAsJson(
-            rows,
-            'testify'
-          )}>
+          <FontAwesome.Button
+            name="cloud-download"
+            backgroundColor={isEmpty(rows) ? 'grey' : '#3b5998'}
+            disabled={isEmpty(rows)}
+            onPress={()=> downloadObjectAsJson(
+              rows,
+              'testify'
+            )}>
           Download
-        </FontAwesome.Button>
+          </FontAwesome.Button>
+        </View>
       </View>
     </View>
   );
@@ -216,6 +221,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around'
     // paddingTop: StatusBar.currentHeight,
+  },
+  content: {
+    flex: 1,
+    flexGrow: 1
+  },
+  footer: {
+    flexShrink: 0,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-around'
   },
   button: {
     textAlignVertical: 'center',

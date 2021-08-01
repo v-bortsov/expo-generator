@@ -47,10 +47,8 @@ export default function App() {
     return (
       <Provider store={ store }>
         <NativeBaseProvider theme={customTheme} colorModeManager={colorModeManager}>
-          <SafeAreaProvider>
-            <Navigation colorScheme={colorScheme} />
-            <StatusBar />
-          </SafeAreaProvider>
+          <Navigation colorScheme={colorScheme} />
+          <StatusBar />
         </NativeBaseProvider>
       </Provider>
     );

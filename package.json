@@ -25,6 +25,7 @@
     "@react-native-community/slider": "^3.0.3",
     "@react-native-picker/picker": "^1.16.3",
     "@react-navigation/bottom-tabs": "5.11.2",
+    "@react-navigation/drawer": "^5.12.5",
     "@react-navigation/native": "~5.8.10",
     "@react-navigation/stack": "~5.12.8",
     "@types/redux-logger": "^3.0.9",
