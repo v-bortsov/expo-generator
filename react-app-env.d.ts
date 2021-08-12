@@ -4,12 +4,19 @@ type TypeLimiting = (null | number | ColumnType.name)
 type Nullable<T> = T | null;
 type Tuple<T, N extends number> = N extends N ? number extends N ? T[] : _TupleOf<T, N, []> : never;
 type _TupleOf<T, N extends number, R extends unknown[]> = R['length'] extends N ? R : _TupleOf<T, N, [T, ...R]>;
+export enum Format {
+  json = 'json',
+  csv = 'csv'
+}
+export const type = <const>['json', 'csv'];
+
 interface GeneratorState {
   columns: ColumnType[]
   rows: any[]
   limiting: TypeLimiting,
   loading: boolean | undefined,
-  editColumn: null | string
+  editColumn: null | string,
+  format: typeof type[number];
 }
 type ColumnType<T> = {
   name: string

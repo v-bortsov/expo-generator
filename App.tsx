@@ -9,7 +9,7 @@ import useCachedResources from './src/hooks/useCachedResources';
 import useColorScheme from './src/hooks/useColorScheme';
 import Navigation from './src/navigation';
 import { store } from './src/store';
-
+import i18n from './src/localization'
 
 const config = {
   useSystemColorMode: false,
@@ -40,14 +40,15 @@ const colorModeManager: StorageManager = {
 export default function App() {
   const isLoadingComplete = useCachedResources(); 
   const colorScheme = useColorScheme();
-
+  console.log(i18n);
+  
   if (!isLoadingComplete) {
     return null;
   } else {
     return (
       <Provider store={ store }>
         <NativeBaseProvider theme={customTheme} colorModeManager={colorModeManager}>
-          <Navigation colorScheme={colorScheme} />
+          <Navigation colorScheme={colorScheme} i18n={i18n} />
           <StatusBar />
         </NativeBaseProvider>
       </Provider>

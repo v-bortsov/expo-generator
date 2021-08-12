@@ -2,7 +2,7 @@ import { lensProp, not, over, pipe, __ } from 'ramda';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { AppDispatch, Day, WeekDay } from '../../../react-app-env';
-import { findAndMerge } from '../../utils';
+import { findAndMerge } from '../../utils/popular';
 export const setDay = (
   day: Day, days: Day[], setDays: AppDispatch
 ): any => pipe(

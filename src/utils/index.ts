@@ -6,5 +6,6 @@ export * from './hook'
 export * from './dom'
 export * from './validate'
 export * from './network'
+export * from './uuid'
 
 // export { dates, popular, form, hook, numbers, dom }

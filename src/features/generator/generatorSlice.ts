@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { anyPass, append, assocPath, clone, cond, converge, evolve, ifElse, map, mergeRight, mergeWith, objOf, pathEq, pipe, pluck, prop, propEq, reject, split, tap, values, __ } from 'ramda'
-import { ColumnType, GeneratorState, Nullable, TypeLimiting } from '../../../react-app-env'
+import { ColumnType, Format, GeneratorState, Nullable, TypeLimiting, type } from '../../../react-app-env'
 import { exampleFields } from '../../constants/Examples'
 import { RootState } from '../../store'
 // import { dayOfWeekToDate, random, cartesianCondition, findAndMerge  } from '../../utils'
@@ -12,7 +12,8 @@ export const initialState: GeneratorState = {
   editColumn: null,
   rows: [],
   limiting: null,
-  loading: false
+  loading: false,
+  format: 'json'
 }
 const bindTypeToHandler = cond([
   [
@@ -106,6 +107,11 @@ export const generatorSlice = createSlice({
       state: GeneratorState, action: PayloadAction<boolean|undefined>
     ) =>{
       state.loading = action.payload
+    },
+    setFormat: (
+      state: GeneratorState, action: PayloadAction<typeof type[number]>
+    ) =>{
+      state.format = action.payload
     },
     run: (
       state: GeneratorState, action: PayloadAction<any[]>

@@ -10,7 +10,7 @@ import TabOneScreen from '../screens/TabOneScreen';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
-export default function BottomTabNavigator() {
+export default function BottomTabNavigator({i18n}) {
   const colorScheme = useColorScheme();
 
   return (
@@ -22,6 +22,8 @@ export default function BottomTabNavigator() {
         component={TabOneNavigator}
         options={{
           tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
+          i18n
+
         }}
       />
     </BottomTab.Navigator>

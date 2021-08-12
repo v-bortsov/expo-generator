@@ -30,10 +30,6 @@ export const onFinish = curry((
       split('\n')
     ),
   ),
-  tap(x => console.log(
-    'onFinish',
-    x
-  )),
   slicer,
   dispatch
 )(state.fields))

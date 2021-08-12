@@ -22,7 +22,7 @@ export default function RadioGroup (): JSX.Element {
       <Radio.Group
         name="myRadioGroup"
         value={group}
-        label="myRadioGroup"
+        aria-label="myRadioGroup"
         onChange={(value: any): void => {
           if (value === 'all') {
             dispatch(setLimit(null)) 
@@ -30,11 +30,11 @@ export default function RadioGroup (): JSX.Element {
         }}
       >
         {map(
-          (v: any): JSX.Element=> <Radio _text={{ color: useContrastText('emerald.700') }} key={v.value} value={v.value} my={1}>{v.label}</Radio>,
+          (v: any): JSX.Element=> <Radio _text={{ color: useContrastText('emerald.700') }} aria-labelledby={v.label} key={v.value} value={v.value} my={1}>{v.label}</Radio>,
           options
         )}
       </Radio.Group>
-      <View style={{width: 200}}>
+      <View style={{width: 200}} aria-label="myRadioGroup">
         {equals(
           'limit',
           group
@@ -62,6 +62,7 @@ export default function RadioGroup (): JSX.Element {
         ) && 
           <Select
             defaultValue="All"
+            aria-labelledby={'select'}
             onChange={ (value: string) => dispatch(setLimit(value)) }
             style={ { width: 120 } }
             options={pipe(map(pipe(

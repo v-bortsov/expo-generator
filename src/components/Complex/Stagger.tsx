@@ -9,17 +9,7 @@ import { StyleSheet, View } from 'react-native'
 import { useDispatch } from 'react-redux'
 import { staggerButtons } from '../../constants/Fields'
 import { createColumn } from '../../features/generator/generatorSlice'
-import { selectByType } from '../../utils'
-
-function uuidv4() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
-    /[xy]/g,
-    function(c) {
-      const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    }
-  );
-}
+import { selectByType, uuidv4 } from '../../utils'
 
 const defaultValueToValue = map(when(
   complement(propEq(
@@ -94,6 +84,7 @@ export default ({ setAdd}: any): JSX.Element => {
               scale: 1,
               opacity: 1,
               transition: {
+                useNativeDriver: false,
                 type: 'spring',
                 mass: 0.8,
                 stagger: {
@@ -101,6 +92,7 @@ export default ({ setAdd}: any): JSX.Element => {
                   reverse: true,
                 },
               },
+              
             }}
             exit={{
               translateY: 34,
@@ -131,22 +123,25 @@ export default ({ setAdd}: any): JSX.Element => {
         <IconButton
           variant="solid"
           rounded="full"
-          size="lg"
+          size="sm"
           onPress={onToggle}
           icon={<MaterialCommunityIcons size={24} name="plus" />}
         >
         Press me
         </IconButton>
-      </Box>
+        </Box> 
     </View>
   )
 }
-const styles = StyleSheet.create({abs: {
+const styles = StyleSheet.create({
+  abs: {
   position: 'absolute',
   backgroundColor: 'rgba(255, 255, 255, 0)',
-  bottom: 20,
+  bottom: 80,
   right: 20,
   zIndex: 100,
+  // width: 100,
+  // height: 100,
   flex: 1,
   justifyContent: 'flex-end'
 }})

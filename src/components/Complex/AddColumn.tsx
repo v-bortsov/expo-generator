@@ -38,11 +38,10 @@ const beforePassProps = pipe<any,any,any,any>(
 
 const getComponentWithProps = curry((
   Component: any, props: Field
-): JSX.Element => <VStack space={4} mx={10} width="80%">
-  <FormControl isRequired>
-
+): JSX.Element => 
+  <FormControl key={props.name} isRequired>
     <FormControl.Label _text={{ color: useContrastText('emerald.700') }}>{props.label}:</FormControl.Label>
-    <Component {...beforePassProps(props)} />
+    <Component  {...beforePassProps(props)} />
     {/* {
       pipe<any, any, any, any>(
         pick(['rules', 'value', 'name']),
@@ -60,8 +59,7 @@ const getComponentWithProps = curry((
       )(props)
     } */}
   </FormControl>
-</VStack>)
-
+)
 export default ({state, dispatch, idx}: { idx: number, state: any, dispatch: AppDispatch}): JSX.Element => pipe<any, any, any>(
   prop<any, any>('fields'),
   map(converge(
