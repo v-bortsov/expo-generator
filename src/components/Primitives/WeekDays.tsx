@@ -3,6 +3,7 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { AppDispatch, Day, WeekDay } from '../../../react-app-env';
 import { findAndMerge } from '../../utils/popular';
+import { theme } from '../../constants/Colors'
 export const setDay = (
   day: Day, days: Day[], setDays: AppDispatch
 ): any => pipe(
@@ -23,7 +24,7 @@ const Circle = (props: any) => {
   const size = props.size || 40;
   const style = {
     borderRadius: size / 2,
-    backgroundColor: !props.active ? 'rgb(255, 255, 255)' : 'steelblue',
+    backgroundColor: !props.active ? 'rgb(255, 255, 255)' : theme.colors.primary,
     justifyContent:'center',
     alignItems:'center',
     width: size,

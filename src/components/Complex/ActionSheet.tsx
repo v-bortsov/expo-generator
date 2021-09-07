@@ -1,12 +1,12 @@
-import { MaterialIcons } from '@expo/vector-icons';
-import { useLinkProps, Link, StackActions, CommonActions } from '@react-navigation/native';
-import { Actionsheet, Icon, Button, useDisclose } from 'native-base';
-import { head, last, map, pipe, toPairs } from 'ramda';
-import {Text, View} from '../Themed'
-import React from 'react';
-import { Platform, TouchableOpacity } from 'react-native';
-import IconButton from '../Complex/IconButton'
-
+import { CommonActions, useLinkProps } from '@react-navigation/native';
+import { Actionsheet as ASheet, useDisclose } from 'native-base';
+import { andThen, head, last, map, pipe, tap, toPairs } from 'ramda';
+import React, { useRef, useState } from 'react';
+import { Platform, SafeAreaView, TouchableOpacity, StyleSheet } from 'react-native';
+import IconButton from '../Complex/IconButton';
+import { Text, View } from '../Themed';
+import ActionSheet from '../Complex/ActionSheet/index'
+import CustomActionSheet from '../Complex/ActionSheet/CustomActionSheet'
 type Language = {
   [key: string]: string
 }
@@ -55,27 +55,86 @@ export const Items = ({languages, navigation}: {languages: Language, navigation:
   //     'Home',
   //     {lang: head(item)}
   //   )}>{last(item)}</Actionsheet.Item>)
-  map((item: string)=><Actionsheet.Item
+  map((item: string)=><ASheet.Item
     onPress={() => navigation.dispatch(CommonActions.navigate({
       name: 'Home',
       params: {
         lang: head(item),
       },
-    }))}>{last(item)}</Actionsheet.Item>)
+    }))}>{last(item)}</ASheet.Item>)
 )(languages)
 
-export default function ActionSheet ({ children, onPress, iconProps, buttonProps}: any) {
-  const { isOpen, onOpen, onClose } = useDisclose();
+// export default function ActionSheet ({ children, onPress, iconProps, buttonProps}: any) {
+//   const { isOpen, onOpen, onClose } = useDisclose();
+//   return (
+//     <>
+//       <IconButton onPress={pipe(tap(onPress),tap(x => console.log('whatTheFuck', x)), onOpen)} {...buttonProps} >
+//         {buttonProps.children}
+//       </IconButton>
+//       <Actionsheet isOpen={isOpen} onClose={onClose}>
+//         <Actionsheet.Content>
+//           {children}
+//         </Actionsheet.Content>
+//       </Actionsheet>
+//     </>
+//   );
+// }
+export default ({ children, onPress, iconProps, buttonProps}: any) => {
+  const [open, setOpen] = useState(false)
   return (
-    <>
-      <IconButton onPress={pipe(onOpen, onPress)} {...buttonProps} >
-        {buttonProps.children}
-      </IconButton>
-      <Actionsheet isOpen={isOpen} onClose={onClose}>
-        <Actionsheet.Content>
-          {children}
-        </Actionsheet.Content>
-      </Actionsheet>
-    </>
-  );
+    <View>
+      {/* <SafeAreaView style={styles.safeareview}> */}
+        <IconButton onPress={pipe(tap(onPress), ()=>setOpen(true))} {...buttonProps}>
+          {buttonProps.children}
+        </IconButton>
+
+        <CustomActionSheet
+          visible={open}
+        >
+          <>
+            <IconButton onPress={()=>setOpen(false)} {...buttonProps}>
+              Close
+            </IconButton>
+            {children}
+          </>
+        </CustomActionSheet>
+        {/* <ActionSheet
+          initialOffsetFromBottom={0.7}
+          ref={actionSheetRef}
+          statusBarTranslucent
+          // onPositionChanged={onHasReachedTop}
+          bounceOnOpen={true}
+          drawUnderStatusBar={false}
+          bounciness={4}
+          gestureEnabled={true}
+          defaultOverlayOpacity={0.3}>
+            {children}
+        </ActionSheet> */}
+      {/* </SafeAreaView> */}
+    </View>
+  )
 }
+const styles = StyleSheet.create({
+  safeareview: {
+    justifyContent: 'center',
+    flex: 1,
+  },
+  btn: {
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    backgroundColor: '#fe8a71',
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    elevation: 5,
+    shadowColor: 'black',
+    shadowOffset: {width: 0.3 * 4, height: 0.5 * 4},
+    shadowOpacity: 0.2,
+    shadowRadius: 0.7 * 4,
+  },
+  btnTitle: {
+    color: 'white',
+    fontWeight: 'bold',
+  }
+})

@@ -1,4 +1,4 @@
-import { is, isEmpty,  isNil } from 'ramda';
+import { is, isEmpty, isNil } from 'ramda';
 import * as React from 'react';
 import {Button} from 'react-native'
 import { DatePickerModal } from 'react-native-paper-dates';

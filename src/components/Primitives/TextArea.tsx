@@ -1,4 +1,3 @@
-import { Stack, TextArea as Text } from 'native-base';
 import { omit } from 'ramda';
 import React from 'react';
 import { TextInput, StyleSheet } from 'react-native';
@@ -11,21 +10,24 @@ const styles = StyleSheet.create({
   },
 });
 
-export const TextArea = (props: any): JSX.Element => <Stack space={4}>
-  <Text
+export const TextArea = (props: any): JSX.Element => 
+  <TextInput
+    style={{backgroundColor: '#fff', outlineStyle: 'none', outlineWidth: 0}}
     onChangeText={props.onChange}
     {...omit(
       ['onChange'],
       props
     )}
-    h={20}
-    aria-label="t1"
-    placeholder="Text Area Placeholder"
-    variant="filled"
-    _light={{
-      placeholderTextColor: 'blueGray.400',
-    }}
-    _dark={{
-      placeholderTextColor: 'blueGray.50',
-    }} />
-</Stack>
+    numberOfLines={4}
+    multiline
+    // h={20}
+    // aria-label="t1"
+    // placeholder="Text Area Placeholder"
+    // variant="filled"
+    // _light={{
+    //   placeholderTextColor: 'blueGray.400',
+    // }}
+    // _dark={{
+    //   placeholderTextColor: 'blueGray.50',
+    // }}
+    />

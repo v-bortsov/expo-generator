@@ -1,16 +1,17 @@
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { always, apply, assoc, clone, complement, converge, curry, filter, isNil, join, lensProp, objOf, over, pathEq, pipe, prop, tap, values, when, __ } from 'ramda';
-import React, { useReducer, useState } from 'react';
-import { ScrollView, StatusBar, StyleSheet, Text } from 'react-native';
+import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { ActivityIndicator, Animated, ScrollView, StatusBar, StyleSheet, Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { View } from '../components/Themed';
 import { editColumn } from '../features/generator/generatorSlice';
 import { RootState } from '../store';
 import { calcCount, findByNameAndChangeScope, reducerFields } from '../utils';
 import Collapse from '../components/Effects/Collapse'
-import { RadioGroup, Stagger, IconButton, Accordion } from '../components/Complex';
+import { RadioGroup, Stagger, IconButton, Accordion, AppBar } from '../components/Complex';
 import AccordionFooter from '../components/Complex/AccordionFooter'
-
+import { theme } from '../constants/Colors'
+import AnimateNumber from '../components/Effects/AnimateNumber'
 const editorColumn = (columns: any)=> pipe<any, any, any, any, any>(
   (name: string)=>filter(pathEq(
     ['name', 'value'],
@@ -68,9 +69,12 @@ export default function TabOneScreen(obj: any) {
   const {rows, columns, editColumn: edit, loading: getLoading, editColumn, limiting} = useSelector((state: RootState) => state.generator)
   const i18n = useSelector((state: RootState) => state.i18n)
   const dispatch = useDispatch()
-  // console.log(state);
+
   return (
     <View style={styles.container}>
+      <View style={{height: 50}}>
+        <AppBar {...{navigation: obj.navigation}} />
+      </View>
       <ScrollView>
         <Accordion items={columns} dispatch={dispatch} editColumn={limiting}/>
       </ScrollView>
@@ -78,15 +82,29 @@ export default function TabOneScreen(obj: any) {
         idx={12341}
         duration={200}
         header={<AccordionFooter {...{dispatch, i18n, locale: obj.route?.params?.lang, rows, columns, getLoading, limiting }} />}
-        summary={<Text>{`testify`}</Text>}
         Button={IconButton}
         buttonProps={{
-          style: {backgroundColor: '#000', color: '#fff'},
-          startIcon: <MaterialIcons style={{textAlignVertical: 'center'}} size={32} name='settings' color='#fff'/>,
-          children: columns.length<=1 ? '0' : calcCount(columns, limiting)
+          style: {backgroundColor: theme.colors.dart, color: theme.colors.light},
+          startIcon: <MaterialIcons style={{textAlignVertical: 'center'}} size={32} name='settings' color={theme.colors.light}/>,
+          children: <AnimateNumber
+            value={ useMemo(()=>columns.length<=1 ? 0 : calcCount(columns, limiting), [columns, limiting])}
+            interval={26} // in miliseconds
+            formatter={(number: any) => parseInt(number)}
+            easing={'easeOut'}
+          />
         }}
         borderStyle={{flex: 1, flexDirection: 'column'}}
-      />
+      >
+        <Text>
+          <Animated.View>
+            {/* {countAnimated.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, columns.length<=1 ? 0 : calcCount(columns, limiting)]
+            })} */}
+            <RadioGroup/>
+          </Animated.View>
+        </Text>
+      </Collapse>
       <Stagger />
     </View>
   );
@@ -95,14 +113,6 @@ export default function TabOneScreen(obj: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: StatusBar.currentHeight,
-  },
-  scrollView: {
-    backgroundColor: 'pink',
-    marginHorizontal: 20,
-  },
-  safearea: {
-    flexGrow: 1,
     paddingTop: StatusBar.currentHeight,
   },
   groupButtons:{

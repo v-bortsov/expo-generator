@@ -1,12 +1,28 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { anyPass, append, assocPath, clone, cond, converge, evolve, ifElse, map, mergeRight, mergeWith, objOf, pathEq, pipe, pluck, prop, propEq, reject, split, tap, values, __ } from 'ramda'
-import { ColumnType, Format, GeneratorState, Nullable, TypeLimiting, type } from '../../../react-app-env'
+import { anyPass, append, assocPath, clone, cond, converge, ifElse, map, mergeRight, mergeWith, objOf, pathEq, pipe, pluck, propEq, reject, __ } from 'ramda'
+import { ColumnType, GeneratorState, type, TypeLimiting } from '../../../react-app-env'
 import { exampleFields } from '../../constants/Examples'
-import { RootState } from '../../store'
 // import { dayOfWeekToDate, random, cartesianCondition, findAndMerge  } from '../../utils'
 import { dayOfWeekToDate } from '../../utils/dates'
 import { random } from '../../utils/numbers'
 import { cartesianCondition, findAndMerge } from '../../utils/popular'
+
+export const thunkCartesianCalc = createAsyncThunk(
+  'rows/cartesian',
+  async (
+    _, store
+  ): Promise<any>  => {
+    const {columns, limiting} = store.getState().generator
+    return cartesianCondition(
+      map(
+        pluck('value'),
+        columns
+      ),
+      limiting
+    )
+    // store.dispatch(run(rows))
+  }
+)
 export const initialState: GeneratorState = {
   columns: exampleFields,
   editColumn: null,
@@ -79,7 +95,7 @@ export const generatorSlice = createSlice({
       )
     },
     changeColumnByName: (
-      state: GeneratorState, action: PayloadAction<any>
+      state: GeneratorState, action: PayloadAction<{path: any[], value: any}>
     ) => {
       state.columns = assocPath(
         action.payload.path,
@@ -119,25 +135,20 @@ export const generatorSlice = createSlice({
       state.rows = action.payload
       state.loading = false
     },
-  }
+  },
+  extraReducers: (builder) => {
+    // Add reducers for additional action types here, and handle loading state as needed
+    builder.addCase(thunkCartesianCalc.fulfilled, (state: GeneratorState, action: PayloadAction<any>) => {
+      // Add user to the state array
+      state.rows = action.payload
+      state.loading = false
+    }),
+    builder.addCase(thunkCartesianCalc.pending, (state: GeneratorState, action: PayloadAction<any>) => {
+      // Add user to the state array
+      state.loading = true
+    })
+  },
 })
-// First, create the thunk
-export const thunkCartesianCalc = createAsyncThunk(
-  'rows/cartesian',
-  async (
-    _, store
-  ): Promise<any[]>  => {
-    store.dispatch(loading(true))
-    const {columns, limiting} = store.getState().generator
-    return  Promise.resolve(cartesianCondition(
-      map(
-        pluck('value'),
-        columns
-      ),
-      limiting
-    ))
-  }
-)
 // The function below is called a thunk and allows us to perform async logic. It
 // can be dispatched like a regular action: `dispatch(incrementAsync(10))`. This
 // will call the thunk with the `dispatch` function as the first argument. Async

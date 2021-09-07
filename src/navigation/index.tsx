@@ -10,10 +10,9 @@ import LinkingConfiguration from './LinkingConfiguration';
 import TabOneScreen from '../screens/TabOneScreen';
 import Colors from '../constants/Colors'
 import { MaterialIcons } from '@expo/vector-icons';
-import { IconButton, Icon } from 'native-base';
-import { AppBar } from '../components/Complex';
+import { AppBar, IconButton } from '../components/Complex';
 import { backgroundColor } from 'styled-system';
-
+import { theme } from '../constants/Colors'
 export default function Navigation({ colorScheme}: { colorScheme: ColorSchemeName}) {
   const colors = {
     background: Colors.dark.background,
@@ -57,10 +56,10 @@ function RootNavigator() {
       screenOptions={{
         drawerType: dimensions.width >= 768 ? 'permanent' : 'slide',
         drawerActiveTintColor: '#fff',
-        drawerIcon: () => <IconButton icon={<Icon size="sm" as={<MaterialIcons name='arrow-back' />} color="white" />} />,
-        header: ({ navigation, route, options }: any) =>  <AppBar {...{navigation}} />,
-        // header: ()=> <MaterialIcons name='arrow-back' color="red"/>,
-        headerStyle: {backgroundColor: '#000'}
+        drawerIcon: () => <MaterialIcons size={24} color={theme.colors.light} name='arrow-back' />,
+        // header: ({ navigation, route, options }: any) =>  <AppBar {...{navigation}} />,
+        // headerStyle: {height: 80, backgroundColor: '#000'},
+        headerShown: false
       }}>
       <Drawer.Screen key={'home'} name="Home" component={TabOneScreen} />
       <Drawer.Screen key={'notifications'} name="Notifications" component={NotFoundScreen} />

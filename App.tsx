@@ -3,7 +3,6 @@ import { StatusBar } from 'expo-status-bar';
 import type { StorageManager } from 'native-base';
 import { ColorMode, extendTheme, NativeBaseProvider } from 'native-base';
 import React from 'react';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import useCachedResources from './src/hooks/useCachedResources';
 import useColorScheme from './src/hooks/useColorScheme';

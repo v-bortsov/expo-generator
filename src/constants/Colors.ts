@@ -1,6 +1,17 @@
 const tintColorLight = '#2f95dc';
 const tintColorDark = '#fff';
 
+
+export const theme = {
+  colors: {
+    primary: '#a5f3fc',
+    secondary: '#0891b2',
+    bg: '#40403f',
+    dart: '#000',
+    light: '#fff'
+  }
+}
+
 export default {
   light: {
     text: '#000',

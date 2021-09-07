@@ -115,7 +115,7 @@ export default ({ setAdd}: any): JSX.Element => {
               mb={4}
               variant="solid"
               rounded="full"
-              icon={<MaterialCommunityIcons color="#fff" size={24} name={icon} />}
+              icon={<MaterialCommunityIcons color="#fff" size={36} name={icon} />}
               onPress={()=>actionByAdd(dispatch)(type)}
             />))}
           </Stagg>
@@ -123,9 +123,9 @@ export default ({ setAdd}: any): JSX.Element => {
         <IconButton
           variant="solid"
           rounded="full"
-          size="sm"
+          size="md"
           onPress={onToggle}
-          icon={<MaterialCommunityIcons size={24} name="plus" />}
+          icon={<MaterialCommunityIcons size={36} name="plus" />}
         >
         Press me
         </IconButton>

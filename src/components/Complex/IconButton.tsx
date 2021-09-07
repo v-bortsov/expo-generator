@@ -24,7 +24,7 @@ const IconButton = ({onPress, startIcon, endIcon, children, isDisabled, style, h
           onPress={onPress}
           style={[styles.container, style, {opacity}, isHovered&&!isDisabled && {backgroundColor: hoverBg}]}
         >
-          <Text style={{textAlignVertical: 'center', color: '#fff'}}>
+          <Text style={{textAlignVertical: 'center', ...{color: !!style?.color ? style.color : '#000'}}}>
             {startIcon && startIcon} {children}
           </Text>
         </TouchableOpacity>
@@ -37,13 +37,9 @@ export default IconButton
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
     borderRadius: 10,
     padding: 10,
     fontSize: 24,
-    // justifyContent: 'center',
-    // alignItems: 'center',
-    // alignContent: 'center',
     textAlignVertical: 'center'
   },
   item: {

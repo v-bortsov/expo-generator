@@ -1,9 +1,9 @@
-import { FormControl, useContrastText, VStack } from 'native-base';
-import { always, both, complement, converge, curry, equals, is, join, lensPath, lensProp, map, objOf, omit, over, pick, pipe, prop, propEq, tap, when } from 'ramda';
+import { FormControl, useContrastText } from 'native-base';
+import { always, both, converge, curry, identity, join, lensProp, map, memoizeWith, omit, over, pick, pipe, prop, propEq, when } from 'ramda';
 import React from 'react';
-import { Field, FormField } from '../../../react-app-env';
+import { Field } from '../../../react-app-env';
 import { AppDispatch } from '../../store';
-import { addValueAndOnChange, getReactComponentFromCollect, isCheck } from '../../utils';
+import { addValueAndOnChange, getReactComponentFromCollect } from '../../utils';
 
 const beforePassProps = pipe<any,any,any,any>(
   pick(['component', 'name', 'value', 'format', 'defaultValue', 'onChange', 'options', 'rows']),
@@ -62,13 +62,16 @@ const getComponentWithProps = curry((
 )
 export default ({state, dispatch, idx}: { idx: number, state: any, dispatch: AppDispatch}): JSX.Element => pipe<any, any, any>(
   prop<any, any>('fields'),
-  map(converge(
-    getComponentWithProps,
-    [
-      getReactComponentFromCollect, addValueAndOnChange(
-        dispatch,
-        idx
-      )
-    ]
+  memoizeWith(
+    identity, 
+    map(converge(
+      getComponentWithProps,
+      [
+        getReactComponentFromCollect, addValueAndOnChange(
+          dispatch,
+          idx
+        )
+      ]
+    )
   ))
 )(state)

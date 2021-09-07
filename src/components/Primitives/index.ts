@@ -6,8 +6,6 @@ import {Input} from './TextInput';
 import {TextArea} from './TextArea'
 import {DatePicker} from './DatePicker'
 import {Multislider} from './Multislider'
-
-
 // export {Input} from './TextInput'
 // export {Slider as InputNumber} from './Slider'
 // export {Select} from './CustomPicker'

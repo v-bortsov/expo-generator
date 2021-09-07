@@ -1,21 +1,25 @@
 import React from 'react'
-import {Box, Slider as Slide} from 'native-base'
-const Slider = (props: any) => (
-  <Box mx={5} width="80%">
+import Slide from '@react-native-community/slider';
+import { View, Text } from '../Themed'
+import { omit, props } from 'ramda';
+
+const Slider = (props: any)=>(
+  <View style={{flex: 1}}>
     <Slide
-      {...props}
-      defaultValue={70}
-      minValue={0}
-      maxValue={100}
-      accessibilityLabel="hello world"
-      step={10}
-    >
-      <Slide.Track>
-        <Slide.FilledTrack />
-      </Slide.Track>
-      <Slide.Thumb />
-    </Slide>
-  </Box>
+      style={{width: 200, height: 40}}
+      {...omit(['onChange'],props)}
+      minimumValue={0}
+      step={1}
+      value={props.value ? props.value : props.defaultValue}
+      maximumValue={100}
+      minimumTrackTintColor="#ff0000"
+      maximumTrackTintColor="#000000"
+      onValueChange={ props.onChange }
+    />
+    <Text>
+      Starts: {props.value ? props.value : props.defaultValue}
+    </Text>
+  </View>
 )
 
 export {Slider}

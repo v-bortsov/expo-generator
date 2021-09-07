@@ -9,13 +9,9 @@ import { AppDispatch } from '../../store';
 import { calcCount, downloadObjectAsJson } from '../../utils';
 import { memorySizeOf, Formatter } from '../Formatter';
 import IconButton from '../Complex/IconButton'
-const startGen = (dispatch: AppDispatch) => () => {
-  dispatch(loading(true))
-  dispatch(thunkCartesianCalc())
-    .then((row: any)=>{
-      dispatch(run(row.payload))
-    });
-}
+import { theme } from '../../constants/Colors'
+
+const startGen = (dispatch: AppDispatch) => () => dispatch(thunkCartesianCalc())
 
 const AccordionFooter = ({dispatch, locale, rows, columns, getLoading, limiting}: any) => (
   <View style={[styles.row]}>
@@ -23,13 +19,15 @@ const AccordionFooter = ({dispatch, locale, rows, columns, getLoading, limiting}
       onPress={startGen(dispatch)}
       buttonProps={{
         children: i18n.t('run_button', { locale }),
-        style: {backgroundColor: '#000', color: '#fff'},
+        style: {backgroundColor: theme.colors.dart, color: theme.colors.light},
         opacity: columns.length<=1 ? 0.3 : 1,
         hoverBg: '#06b6d4',
         isDisabled: columns.length<=1||getLoading,
-        startIcon: <MaterialIcons style={{textAlignVertical: 'center'}} name='directions-run' color={'#fff'} size={32} />
+        startIcon: getLoading ? <ActivityIndicator size="large" color="#06b6d4" /> : <MaterialIcons style={{textAlignVertical: 'center'}} name='directions-run' color={theme.colors.light} size={32} />
       }}
     >
+      <View><Text>hello!</Text></View>
+      {/* {!getLoading  ? <>
       <Text>Size: {memorySizeOf(rows)}, Total: {rows.length}</Text>
       <FontAwesome.Button
         name="cloud-download" 
@@ -45,6 +43,8 @@ const AccordionFooter = ({dispatch, locale, rows, columns, getLoading, limiting}
         )}</Text>
       </FontAwesome.Button>
       <Formatter rows={rows} />
+      </>
+      : null} */}
     </ActionSheet>
   </View>
 )
@@ -55,9 +55,5 @@ const styles = StyleSheet.create({
   row: {
     flex: 1,
     ...childMargin
-    // alignItems: 'center',
-    // flexDirection: 'row',
-    // justifyContent: 'space-around'
-    // paddingTop: StatusBar.currentHeight,
   },
 })
